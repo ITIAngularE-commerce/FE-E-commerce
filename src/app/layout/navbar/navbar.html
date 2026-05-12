@@ -1,0 +1,123 @@
+<nav [class]="isScrolled() ? 'navbar-scrolled' : 'navbar-top'" class="navbar-wrapper">
+
+  <div class="max-w-7xl mx-auto px-4 flex items-center gap-4 h-16">
+
+    <!-- Logo -->
+    <a routerLink="/" class="flex items-center gap-2 flex-shrink-0">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <polygon points="14,2 26,8 26,20 14,26 2,20 2,8"
+          fill="none" stroke="#7c3aed" stroke-width="2"/>
+        <polygon points="14,7 21,11 21,17 14,21 7,17 7,11"
+          fill="#7c3aed" opacity="0.3"/>
+        <circle cx="14" cy="14" r="3" fill="#7c3aed"/>
+      </svg>
+      <span class="logo-text">ShopNow</span>
+    </a>
+
+    <!-- Search bar -->
+    <div class="search-wrapper flex-1 max-w-xl hidden md:flex items-center gap-2">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input
+        type="text"
+        placeholder="Search products, brands..."
+        class="search-input"
+      />
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3 ml-auto">
+
+      <!-- Wishlist -->
+      <a routerLink="/wishlist" class="icon-btn relative">
+        <svg width="20" height="20" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06
+            a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+            1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        @if (wishlistCount() > 0) {
+          <span class="badge-count">{{ wishlistCount() }}</span>
+        }
+      </a>
+
+      <!-- Cart -->
+      <a routerLink="/cart" class="icon-btn relative">
+        <svg width="20" height="20" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72
+            a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        @if (cartCount() > 0) {
+          <span class="badge-count cart-badge">{{ cartCount() }}</span>
+        }
+      </a>
+
+      <!-- User menu -->
+      <div class="relative">
+        <button class="icon-btn" (click)="toggleUserMenu()">
+          <svg width="20" height="20" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+
+        @if (isUserMenuOpen()) {
+          <div class="user-dropdown">
+            <a routerLink="/profile" class="dropdown-item">My Profile</a>
+            <a routerLink="/orders" class="dropdown-item">My Orders</a>
+            <a routerLink="/wishlist" class="dropdown-item">Wishlist</a>
+            <hr class="dropdown-divider"/>
+            <a routerLink="/auth/login" class="dropdown-item text-red-400">Sign out</a>
+          </div>
+        }
+      </div>
+
+      <!-- Mobile menu button -->
+      <button class="icon-btn md:hidden" (click)="toggleMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Categories bar -->
+  <div class="categories-bar hidden md:flex">
+    <div class="max-w-7xl mx-auto px-4 flex items-center gap-6">
+      @for (cat of categories; track cat.name) {
+          <a [routerLink]="cat.route"
+          routerLinkActive="cat-active"
+          class="cat-link">
+
+          {{ cat.name }}
+        </a>
+      }
+      <a routerLink="/products" class="cat-link text-purple-400">All Categories</a>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  @if (isMobileMenuOpen()) {
+    <div class="mobile-menu">
+      <div class="search-wrapper flex items-center gap-2 mb-4">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" placeholder="Search..." class="search-input"/>
+      </div>
+      @for (cat of categories; track cat.name) {
+        <a [routerLink]="cat.route" class="mobile-nav-item">{{ cat.name }}</a>
+      }
+    </div>
+  }
+
+</nav>

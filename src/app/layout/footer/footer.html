@@ -1,0 +1,118 @@
+<footer class="footer-wrapper">
+
+  <!-- Wave top border -->
+  <div class="wave-border">
+    <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
+      <path d="M0,30 C300,60 900,0 1200,30 L1200,60 L0,60 Z"
+        fill="rgba(124,58,237,0.08)"/>
+      <path d="M0,40 C400,10 800,50 1200,20 L1200,60 L0,60 Z"
+        fill="rgba(124,58,237,0.05)"/>
+    </svg>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 pt-12 pb-8">
+
+    <!-- Top section -->
+    <div class="footer-grid">
+
+      <!-- Brand col -->
+      <div class="brand-col">
+        <a routerLink="/" class="flex items-center gap-2 mb-4">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <polygon points="14,2 26,8 26,20 14,26 2,20 2,8"
+              fill="none" stroke="#7c3aed" stroke-width="2"/>
+            <polygon points="14,7 21,11 21,17 14,21 7,17 7,11"
+              fill="#7c3aed" opacity="0.3"/>
+            <circle cx="14" cy="14" r="3" fill="#7c3aed"/>
+          </svg>
+          <span class="logo-text">ShopNow</span>
+        </a>
+        <p class="brand-desc">
+          Your modern marketplace for everything you need. Fast shipping,
+          secure payments, and thousands of trusted sellers.
+        </p>
+        <!-- Socials -->
+        <div class="flex items-center gap-3 mt-5">
+          @for (social of socials; track social.label) {
+            <a [href]="social.url" target="_blank"
+              class="social-btn" [attr.aria-label]="social.label">
+              <svg width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"
+                [innerHTML]="social.icon">
+              </svg>
+            </a>
+          }
+        </div>
+      </div>
+
+      <!-- Company links -->
+      <div>
+        <h4 class="footer-heading">Company</h4>
+        <ul class="footer-links">
+          @for (link of links.company; track link.label) {
+            <li>
+              <a [routerLink]="link.route" class="footer-link">
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Support links -->
+      <div>
+        <h4 class="footer-heading">Support</h4>
+        <ul class="footer-links">
+          @for (link of links.support; track link.label) {
+            <li>
+              <a [routerLink]="link.route" class="footer-link">
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div>
+        <h4 class="footer-heading">Stay updated</h4>
+        <p class="newsletter-desc">
+          Get the latest deals and news directly in your inbox.
+        </p>
+        <div class="newsletter-form">
+          <input
+            type="email"
+            placeholder="your@email.com"
+            class="newsletter-input"
+          />
+          <button class="newsletter-btn">Subscribe</button>
+        </div>
+        <!-- Legal links -->
+        <div class="flex flex-wrap gap-3 mt-6">
+          @for (link of links.legal; track link.label) {
+            <a [routerLink]="link.route" class="legal-link">
+              {{ link.label }}
+            </a>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Divider -->
+    <div class="footer-divider"></div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+      <span>© {{ currentYear }} ShopNow. All rights reserved.</span>
+      <div class="payment-badges">
+        <span class="payment-badge">Visa</span>
+        <span class="payment-badge">Mastercard</span>
+        <span class="payment-badge">PayPal</span>
+        <span class="payment-badge">Cash</span>
+      </div>
+    </div>
+
+  </div>
+</footer>
