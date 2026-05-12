@@ -1,60 +1,97 @@
 .footer-wrapper {
-  background: #0a0818;
-  border-top: 1px solid rgba(124, 58, 237, 0.15);
   position: relative;
+  background: #0a1628;
+  border-top: 1px solid rgba(200, 169, 110, 0.12);
   margin-top: auto;
+  width: 100%;
 }
 
-.wave-border {
+/* ── Animated wave ── */
+.wave-top {
   width: 100%;
-  height: 60px;
+  height: 80px;
   overflow: hidden;
   margin-bottom: -2px;
 }
 
-.wave-border svg {
+.wave-top svg {
   width: 100%;
   height: 100%;
 }
 
-.logo-text {
+.wave-path-1 {
+  fill: rgba(200, 169, 110, 0.06);
+  animation: wave-move 8s ease-in-out infinite;
+}
+
+.wave-path-2 {
+  fill: rgba(200, 169, 110, 0.04);
+  animation: wave-move 6s ease-in-out infinite reverse;
+}
+
+@keyframes wave-move {
+  0%, 100% { d: path("M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1380,20 1440,40 L1440,80 L0,80 Z"); }
+  50%       { d: path("M0,20 C180,60 360,10 540,50 C720,90 900,10 1080,50 C1260,90 1380,30 1440,20 L1440,80 L0,80 Z"); }
+}
+
+/* ── Container ── */
+.footer-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 24px 32px;
+}
+
+/* ── Grid ── */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1.5fr;
+  gap: 48px;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .brand-col { grid-column: 1 / -1; }
+}
+
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Brand ── */
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+
+.footer-logo-text {
   font-size: 1.2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, #f5f0e8 0%, #c8a96e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.8fr 1fr 1fr 1.5fr;
-  gap: 3rem;
-  width: 100%;      
-}
-
-@media (max-width: 768px) {
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-
-  .brand-col {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 480px) {
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .brand-desc {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.4);
-  line-height: 1.7;
+  color: rgba(245, 240, 232, 0.4);
+  line-height: 1.75;
   max-width: 280px;
+  margin-bottom: 20px;
+}
+
+/* ── Socials ── */
+.socials {
+  display: flex;
+  gap: 8px;
 }
 
 .social-btn {
@@ -64,26 +101,28 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.5);
+  background: rgba(245, 240, 232, 0.05);
+  border: 1px solid rgba(200, 169, 110, 0.15);
+  color: rgba(245, 240, 232, 0.45);
+  text-decoration: none;
   transition: all 0.2s;
 }
 
 .social-btn:hover {
-  background: rgba(124, 58, 237, 0.2);
-  border-color: rgba(124, 58, 237, 0.4);
-  color: #a78bfa;
+  background: rgba(200, 169, 110, 0.12);
+  border-color: rgba(200, 169, 110, 0.4);
+  color: #c8a96e;
   transform: translateY(-2px);
 }
 
+/* ── Links ── */
 .footer-heading {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: #c8a96e;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 1rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
 }
 
 .footer-links {
@@ -92,88 +131,98 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 10px;
 }
 
 .footer-link {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(245, 240, 232, 0.4);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .footer-link:hover {
-  color: #a78bfa;
+  color: #c8a96e;
 }
 
+/* ── Newsletter ── */
 .newsletter-desc {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 1rem;
+  color: rgba(245, 240, 232, 0.4);
   line-height: 1.6;
+  margin-bottom: 14px;
 }
 
 .newsletter-form {
   display: flex;
   gap: 8px;
+  margin-bottom: 16px;
 }
 
 .newsletter-input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  height: 40px;
+  background: rgba(245, 240, 232, 0.05);
+  border: 1px solid rgba(200, 169, 110, 0.18);
   border-radius: 10px;
   padding: 0 14px;
-  height: 38px;
-  color: #fff;
+  color: #f5f0e8;
   font-size: 0.85rem;
   outline: none;
   transition: all 0.2s;
 }
 
 .newsletter-input::placeholder {
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(245, 240, 232, 0.25);
 }
 
 .newsletter-input:focus {
-  border-color: rgba(124, 58, 237, 0.5);
-  background: rgba(124, 58, 237, 0.05);
+  border-color: rgba(200, 169, 110, 0.5);
+  background: rgba(200, 169, 110, 0.06);
 }
 
 .newsletter-btn {
-  background: #7c3aed;
-  color: #fff;
+  height: 40px;
+  padding: 0 18px;
+  background: #c8a96e;
+  color: #0d1b2a;
   border: none;
   border-radius: 10px;
-  padding: 0 16px;
-  height: 38px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
   white-space: nowrap;
+  transition: all 0.2s;
 }
 
 .newsletter-btn:hover {
-  background: #6d28d9;
+  background: #d4b87a;
   transform: translateY(-1px);
+}
+
+/* ── Legal ── */
+.legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .legal-link {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(245, 240, 232, 0.25);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .legal-link:hover {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(245, 240, 232, 0.5);
 }
 
+/* ── Bottom ── */
 .footer-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.06);
-  margin: 2rem 0 1.5rem;
+  background: rgba(245, 240, 232, 0.06);
+  margin: 40px 0 24px;
 }
 
 .footer-bottom {
@@ -181,9 +230,9 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 12px;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(245, 240, 232, 0.25);
 }
 
 .payment-badges {
@@ -192,10 +241,10 @@
 }
 
 .payment-badge {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(245, 240, 232, 0.05);
+  border: 1px solid rgba(200, 169, 110, 0.15);
   border-radius: 6px;
   padding: 3px 10px;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(245, 240, 232, 0.35);
 }

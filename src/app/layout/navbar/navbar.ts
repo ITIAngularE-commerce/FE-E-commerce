@@ -9,12 +9,12 @@ import { CommonModule } from '@angular/common';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class NavbarComponent {
+export class Navbar {
   isScrolled = signal(false);
   isMobileMenuOpen = signal(false);
+  isUserMenuOpen = signal(false);
   cartCount = signal(2);
   wishlistCount = signal(3);
-  isUserMenuOpen = signal(false);
 
   categories = [
     { name: 'Electronics', route: '/products/electronics' },

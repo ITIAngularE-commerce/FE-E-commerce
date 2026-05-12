@@ -4,6 +4,13 @@
   ],
   "hints": {
     "compat-api/css": "off",
-    "axe/name-role-value": "off"
+    "axe/name-role-value": "off",
+    "disown-opener": "off",
+    "axe/structure": [
+      "default",
+      {
+        "list": "off"
+      }
+    ]
   }
 }

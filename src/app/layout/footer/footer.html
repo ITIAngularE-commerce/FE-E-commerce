@@ -1,52 +1,64 @@
 <footer class="footer-wrapper">
 
-  <!-- Wave top border -->
-  <div class="wave-border">
-    <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
-      <path d="M0,30 C300,60 900,0 1200,30 L1200,60 L0,60 Z"
-        fill="rgba(124,58,237,0.08)"/>
-      <path d="M0,40 C400,10 800,50 1200,20 L1200,60 L0,60 Z"
-        fill="rgba(124,58,237,0.05)"/>
+  <!-- Animated wave top -->
+  <div class="wave-top">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="wave-path-1"
+        d="M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1380,20 1440,40 L1440,80 L0,80 Z"/>
+      <path class="wave-path-2"
+        d="M0,55 C200,20 400,70 600,45 C800,20 1000,65 1200,40 C1320,25 1400,50 1440,55 L1440,80 L0,80 Z"/>
     </svg>
   </div>
 
-  <div class="max-w-7xl mx-auto px-6 pt-12 pb-8">
+  <div class="footer-container">
 
-    <!-- Top section -->
+    <!-- Top grid -->
     <div class="footer-grid">
 
-      <!-- Brand col -->
+      <!-- Brand -->
       <div class="brand-col">
-        <a routerLink="/" class="flex items-center gap-2 mb-4">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <polygon points="14,2 26,8 26,20 14,26 2,20 2,8"
-              fill="none" stroke="#7c3aed" stroke-width="2"/>
-            <polygon points="14,7 21,11 21,17 14,21 7,17 7,11"
-              fill="#7c3aed" opacity="0.3"/>
-            <circle cx="14" cy="14" r="3" fill="#7c3aed"/>
+        <a routerLink="/" class="footer-logo">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
+            <path d="M16 2L28 8V16C28 22.627 22.627 28 16 28C9.373 28 4 22.627 4 16V8L16 2Z"
+              fill="none" stroke="#c8a96e" stroke-width="1.5"/>
+            <path d="M16 8L22 11.5V16C22 19.314 19.314 22 16 22C12.686 22 10 19.314 10 16V11.5L16 8Z"
+              fill="#c8a96e" opacity="0.2"/>
+            <circle cx="16" cy="16" r="3" fill="#c8a96e"/>
           </svg>
-          <span class="logo-text">ShopNow</span>
+          <span class="footer-logo-text">ShopNow</span>
         </a>
         <p class="brand-desc">
-          Your modern marketplace for everything you need. Fast shipping,
-          secure payments, and thousands of trusted sellers.
+          Your modern marketplace for everything you need.
+          Fast shipping, secure payments, thousands of trusted sellers.
         </p>
         <!-- Socials -->
-        <div class="flex items-center gap-3 mt-5">
-          @for (social of socials; track social.label) {
-            <a [href]="social.url" target="_blank"
-              class="social-btn" [attr.aria-label]="social.label">
-              <svg width="16" height="16" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round"
-                [innerHTML]="social.icon">
-              </svg>
-            </a>
-          }
+        <div class="socials">
+          <a href="https://twitter.com" target="_blank" class="social-btn" aria-label="Twitter">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6
+                2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1
+                9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
+            </svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-btn" aria-label="Instagram">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" class="social-btn" aria-label="Facebook">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+            </svg>
+          </a>
         </div>
       </div>
 
-      <!-- Company links -->
+      <!-- Company -->
       <div>
         <h4 class="footer-heading">Company</h4>
         <ul class="footer-links">
@@ -60,7 +72,7 @@
         </ul>
       </div>
 
-      <!-- Support links -->
+      <!-- Support -->
       <div>
         <h4 class="footer-heading">Support</h4>
         <ul class="footer-links">
@@ -81,15 +93,11 @@
           Get the latest deals and news directly in your inbox.
         </p>
         <div class="newsletter-form">
-          <input
-            type="email"
-            placeholder="your@email.com"
-            class="newsletter-input"
-          />
+          <input type="email" placeholder="your@email.com"
+            class="newsletter-input"/>
           <button class="newsletter-btn">Subscribe</button>
         </div>
-        <!-- Legal links -->
-        <div class="flex flex-wrap gap-3 mt-6">
+        <div class="legal-links">
           @for (link of links.legal; track link.label) {
             <a [routerLink]="link.route" class="legal-link">
               {{ link.label }}
@@ -103,7 +111,7 @@
     <!-- Divider -->
     <div class="footer-divider"></div>
 
-    <!-- Bottom bar -->
+    <!-- Bottom -->
     <div class="footer-bottom">
       <span>© {{ currentYear }} ShopNow. All rights reserved.</span>
       <div class="payment-badges">
