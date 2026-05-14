@@ -1,0 +1,298 @@
+<div class="profile-page">
+
+    <!-- Loading skeleton -->
+    @if (isLoadingProfile()) {
+    <div class="skeleton-wrapper">
+        <div class="skeleton skeleton-avatar"></div>
+        <div class="skeleton-lines">
+            <div class="skeleton skeleton-line wide"></div>
+            <div class="skeleton skeleton-line medium"></div>
+            <div class="skeleton skeleton-line narrow"></div>
+        </div>
+    </div>
+    }
+
+    @if (!isLoadingProfile()) {
+    <!-- Profile Header Card -->
+    <div class="profile-header-card">
+        <div class="header-bg-glow"></div>
+        <div class="header-content">
+            <div class="avatar-section">
+                <div class="avatar-ring">
+                    <div class="avatar">{{ userInitials() }}</div>
+                </div>
+                <div class="avatar-status" [class.active]="profile()?.isActive"></div>
+            </div>
+            <div class="header-info">
+                <h1 class="profile-name">{{ profile()?.fullName }}</h1>
+                <p class="profile-email">
+                    <span class="icon">✉</span>
+                    {{ profile()?.email }}
+                </p>
+                <div class="header-meta">
+                    <span class="role-badge" [class]="roleBadgeClass()">
+                        {{ profile()?.role }}
+                    </span>
+                    <span class="join-date">
+                        <span class="icon">📅</span>
+                        Member since {{ formatDate(profile()?.createdAt ?? '') }}
+                    </span>
+                    <span class="status-pill" [class.status-active]="profile()?.isActive">
+                        <span class="dot"></span>
+                        {{ profile()?.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    @if (successMessage()) {
+    <div class="toast-success">
+        <span class="toast-icon">✓</span>
+        {{ successMessage() }}
+    </div>
+    }
+
+    <!-- Tabs -->
+    <div class="tabs-bar">
+        <button class="tab-btn" [class.active]="activeTab() === 'info'" (click)="setTab('info')">
+            <span class="tab-icon">👤</span> Personal Info
+        </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'addresses'" (click)="setTab('addresses')">
+            <span class="tab-icon">📍</span> Addresses
+            @if (addresses().length > 0) {
+            <span class="tab-count">{{ addresses().length }}</span>
+            }
+        </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'security'" (click)="setTab('security')">
+            <span class="tab-icon">🔒</span> Security
+        </button>
+    </div>
+
+    <!-- ── TAB: Personal Info ── -->
+    @if (activeTab() === 'info') {
+    <div class="tab-content animate-in">
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">Personal Information</h2>
+                <p class="section-sub">Update your name and contact details</p>
+            </div>
+
+            @if (profileError()) {
+            <div class="error-banner">{{ profileError() }}</div>
+            }
+
+            <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+                <!-- Read-only: Email -->
+                <div class="form-group">
+                    <label class="form-label">Email address</label>
+                    <div class="form-input  readonly-input">
+                        <span>{{ profile()?.email }}</span>
+                        <span class="readonly-badge">Read only</span>
+                    </div>
+                </div>
+
+                <!-- Editable: Full Name -->
+                <div class="form-group">
+                    <label class="form-label" for="fullName">Full name</label>
+                    <div class="input-wrapper"
+                        [class.error]="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched">
+                        <span class="input-icon">👤</span>
+                        <input id="fullName" type="text" class="form-input" formControlName="fullName"
+                            placeholder="Your full name" />
+                    </div>
+                    @if (profileForm.get('fullName')?.errors?.['required'] && profileForm.get('fullName')?.touched) {
+                    <span class="field-error">Full name is required</span>
+                    }
+                </div>
+
+                <!-- Editable: Phone -->
+                <div class="form-group">
+                    <label class="form-label" for="phoneNumber">Phone number</label>
+                    <div class="input-wrapper"
+                        [class.error]="profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched">
+                        <span class="input-icon">📱</span>
+                        <input id="phoneNumber" type="tel" class="form-input" formControlName="phoneNumber"
+                            placeholder="+20 100 000 0000" />
+                    </div>
+                    @if (profileForm.get('phoneNumber')?.errors?.['pattern'] && profileForm.get('phoneNumber')?.touched)
+                    {
+                    <span class="field-error">Enter a valid phone number</span>
+                    }
+                </div>
+
+                <!-- Read-only: Role -->
+                <div class="form-group">
+                    <label class="form-label">Account role</label>
+                    <div class="form-input readonly-input">
+                        <span>{{ profile()?.role }}</span>
+                        <span class="readonly-badge">System assigned</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" [disabled]="profileForm.invalid || isSavingProfile()">
+                        @if (isSavingProfile()) {
+                        <span class="spinner"></span> Saving…
+                        } @else {
+                        Save changes
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    }
+
+    <!-- ── TAB: Addresses ── -->
+    @if (activeTab() === 'addresses') {
+    <div class="tab-content animate-in">
+        <div class="section-card">
+            <div class="section-header row">
+                <div>
+                    <h2 class="section-title">Saved Addresses</h2>
+                    <p class="section-sub">Manage your delivery addresses</p>
+                </div>
+                @if (!showAddressForm()) {
+                <button class="btn-primary btn-sm" (click)="openAddressForm()">
+                    + Add address
+                </button>
+                }
+            </div>
+
+            @if (addressError()) {
+            <div class="error-banner">{{ addressError() }}</div>
+            }
+
+            <!-- Add / Edit Form -->
+            @if (showAddressForm()) {
+            <div class="address-form-box">
+                <h3 class="form-box-title">
+                    {{ editingAddressId() ? 'Edit address' : 'New address' }}
+                </h3>
+                <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="address-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Street</label>
+                            <input type="text" class="form-input" formControlName="street" placeholder="123 Main St" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-input" formControlName="city" placeholder="Cairo" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State / Governorate</label>
+                            <input type="text" class="form-input" formControlName="state" placeholder="Gharbia" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Country</label>
+                            <input type="text" class="form-input" formControlName="country" placeholder="Egypt" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ZIP / Postal code</label>
+                            <input type="text" class="form-input" formControlName="zipCode" placeholder="31511" />
+                        </div>
+                    </div>
+                    <label class="checkbox-label">
+                        <input type="checkbox" formControlName="isDefault" class="checkbox-input" />
+                        <span class="checkbox-custom"></span>
+                        Set as default address
+                    </label>
+                    <div class="form-actions row">
+                        <button type="button" class="btn-ghost" (click)="closeAddressForm()">Cancel</button>
+                        <button type="submit" class="btn-primary" [disabled]="addressForm.invalid || isSavingAddress()">
+                            @if (isSavingAddress()) {
+                            <span class="spinner"></span> Saving…
+                            } @else {
+                            {{ editingAddressId() ? 'Update address' : 'Add address' }}
+                            }
+                        </button>
+                    </div>
+                </form>
+            </div>
+            }
+
+            <!-- Empty State -->
+            @if (addresses().length === 0 && !isLoadingAddresses()) {
+            <div class="empty-state">
+                <div class="empty-icon">📍</div>
+                <p class="empty-title">No addresses yet</p>
+                <p class="empty-sub">Add a delivery address to speed up checkout</p>
+                @if (!showAddressForm()) {
+                <button class="btn-primary" (click)="openAddressForm()">+ Add your first address</button>
+                }
+            </div>
+            }
+
+            <!-- Address Cards -->
+            @if (addresses().length > 0) {
+            <div class="addresses-grid">
+                @for (address of addresses(); track address.id) {
+                <div class="address-card" [class.default-card]="address.isDefault">
+                    @if (address.isDefault) {
+                    <span class="default-chip">Default</span>
+                    }
+                    <div class="address-body">
+                        <p class="address-line">{{ address.street }}</p>
+                        <p class="address-line muted">{{ address.city }}, {{ address.state }}</p>
+                        <p class="address-line muted">{{ address.country }} {{ address.zipCode }}</p>
+                    </div>
+                    <div class="address-actions">
+                        @if (!address.isDefault) {
+                        <button class="btn-text" (click)="setDefault(address.id)">Set default</button>
+                        }
+                        <button class="btn-text" (click)="openAddressForm(address)">Edit</button>
+                        <button class="btn-text danger" (click)="deleteAddress(address.id)">Delete</button>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+    }
+
+    <!-- ── TAB: Security ── -->
+    @if (activeTab() === 'security') {
+    <div class="tab-content animate-in">
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">Security Settings</h2>
+                <p class="section-sub">Manage your account password and security</p>
+            </div>
+            <div class="security-item">
+                <div class="security-info">
+                    <span class="security-icon">🔑</span>
+                    <div>
+                        <p class="security-label">Password</p>
+                        <p class="security-desc">Last changed: unknown</p>
+                    </div>
+                </div>
+                <button class="btn-ghost">Change password</button>
+            </div>
+            <div class="security-item">
+                <div class="security-info">
+                    <span class="security-icon">📧</span>
+                    <div>
+                        <p class="security-label">Email verification</p>
+                        <p class="security-desc">{{ profile()?.email }}</p>
+                    </div>
+                </div>
+                <span class="verified-chip">✓ Verified</span>
+            </div>
+            <div class="security-item">
+                <div class="security-info">
+                    <span class="security-icon">🗑</span>
+                    <div>
+                        <p class="security-label">Delete account</p>
+                        <p class="security-desc">Permanently remove your account and data</p>
+                    </div>
+                </div>
+                <button class="btn-danger">Delete account</button>
+            </div>
+        </div>
+    </div>
+    }
+    }
+</div>

@@ -1,3 +1,4 @@
+import { ProfileComponent } from './features/user/profile/profile.component/profile.component';
 import { Routes } from '@angular/router';
 import { MainLayout } from './layout/main-layout/main-layout';
 import { AuthLayout } from './layout/auth-layout/auth-layout';
@@ -22,11 +23,11 @@ export const routes: Routes = [
       //   loadComponent: () =>
       //     import('./features/products/product-detail/product-detail').then((m) => m.ProductDetail),
       // },
-      // {
-      //   path: 'cart',
-      //   canActivate: [authGuard],
-      //   loadComponent: () => import('./features/cart/cart-page/cart-page').then((m) => m.CartPage),
-      // },
+      {
+        path: 'cart',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/cart/cart-page/cart-page').then((m) => m.CartPage),
+      },
       // {
       //   path: 'orders',
       //   canActivate: [authGuard],
@@ -44,11 +45,11 @@ export const routes: Routes = [
       //   canActivate: [authGuard],
       //   loadComponent: () => import('./features/user/wishlist/wishlist').then((m) => m.Wishlist),
       // },
-      // {
-      //   path: 'profile',
-      //   canActivate: [authGuard],
-      //   loadComponent: () => import('./features/user/profile/profile').then((m) => m.Profile),
-      // },
+      {
+        path: 'profile',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/user/profile/profile.component/profile.component').then((m) => m.ProfileComponent),
+      },
       // {
       //   path: 'seller',
       //   canActivate: [authGuard, roleGuard(['Seller'])],
