@@ -1,0 +1,139 @@
+.auth-shell {
+  min-height: 100vh;
+  width: 100%;
+  background: #0d1b2a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Animated waves ── */
+.waves-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wave {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.wave-1 path {
+  fill: rgba(200, 169, 110, 0.06);
+  animation: wave-float 10s ease-in-out infinite;
+}
+
+.wave-2 path {
+  fill: rgba(200, 169, 110, 0.04);
+  animation: wave-float 14s ease-in-out infinite reverse;
+}
+
+.wave-3 path {
+  fill: rgba(26, 46, 69, 0.6);
+  animation: wave-float 18s ease-in-out infinite;
+}
+
+@keyframes wave-float {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  33%       { transform: translateY(-30px) scaleX(1.02); }
+  66%       { transform: translateY(20px) scaleX(0.98); }
+}
+
+/* ── Logo ── */
+.auth-logo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  margin-bottom: 32px;
+}
+
+.auth-logo-text {
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f5f0e8 0%, #c8a96e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Card ── */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+
+  background: rgba(26, 46, 69, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+
+  border: 1px solid rgba(200, 169, 110, 0.25);
+  border-radius: 24px;
+  padding: 40px;
+
+  box-shadow:
+    0 0 0 1px rgba(200, 169, 110, 0.08),
+    0 24px 64px rgba(0, 0, 0, 0.45),
+    0 0 80px rgba(200, 169, 110, 0.06);
+
+  overflow: hidden;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(200, 169, 110, 0.08) 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(200, 169, 110, 0.08) 60%,
+    transparent 80%
+  );
+  transform: skewX(-15deg);
+  transition: none;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.auth-card:hover {
+  border-color: rgba(200, 169, 110, 0.4);
+  box-shadow:
+    0 0 0 1px rgba(200, 169, 110, 0.15),
+    0 32px 80px rgba(0, 0, 0, 0.5),
+    0 0 120px rgba(200, 169, 110, 0.12);
+}
+
+.auth-card:hover::before {
+  left: 150%;
+  transition: left 0.7s ease;
+}
+
+.auth-logo,
+.auth-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 480px) {
+  .auth-card { padding: 28px 20px; }
+}
+
+@media (max-width: 480px) {
+  .auth-card { padding: 28px 20px; }
+}

@@ -1,0 +1,129 @@
+<section class="hero">
+
+  <!-- Background waves -->
+  <div class="waves-container">
+    <svg class="wave w1" viewBox="0 0 1440 600"
+      preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,300 C360,100 720,500 1080,250 C1260,125 1380,325 1440,300 L1440,600 L0,600 Z"/>
+    </svg>
+    <svg class="wave w2" viewBox="0 0 1440 600"
+      preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,400 C300,200 600,550 900,350 C1100,220 1300,400 1440,380 L1440,600 L0,600 Z"/>
+    </svg>
+    <svg class="wave w3" viewBox="0 0 1440 600"
+      preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,480 C400,300 800,560 1100,420 C1280,340 1380,460 1440,450 L1440,600 L0,600 Z"/>
+    </svg>
+  </div>
+
+  <!-- Particles -->
+  <div class="particles">
+    @for (p of [1,2,3,4,5,6,7,8]; track p) {
+      <div class="particle" [style.--i]="p"></div>
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="hero-content">
+
+    <!-- Left -->
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Summer Sale — Up to 60% off
+      </div>
+
+      <h1 class="hero-title">
+        Discover the<br/>
+        <span class="hero-title-accent">Latest Trends</span>
+      </h1>
+
+      <p class="hero-desc">
+        Free shipping on orders over $50. Shop from thousands
+        of trusted sellers across all categories.
+      </p>
+
+      <!-- Stats -->
+      <div class="hero-stats">
+        @for (stat of stats; track stat.label) {
+          <div class="stat-item">
+            <span class="stat-value">{{ stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- CTA -->
+      <div class="hero-ctas">
+        <a routerLink="/products" class="btn-primary">
+          <span class="btn-shimmer"></span>
+          Shop now
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+        <a routerLink="/auth/register" class="btn-secondary">
+          Become a seller
+        </a>
+      </div>
+    </div>
+
+    <!-- Right — 3D rotating categories -->
+    <div class="hero-right">
+      <div class="categories-3d">
+
+        <!-- Center active card -->
+        <div class="center-card"
+          [style.--color]="categories[activeCategory()].color">
+          <div class="center-card-inner">
+            <!-- <div class="card-icon"
+              [innerHTML]="categories[activeCategory()].icon"
+              [style.color]="categories[activeCategory()].color">
+            </div> -->
+            <div class="card-icon w-25"
+              [style.color]="categories[activeCategory()].color">
+              <app-cat-icon [name]="categories[activeCategory()].iconKey" />
+            </div>
+            <span class="card-name">
+              {{ categories[activeCategory()].name }}
+            </span>
+            <span class="card-label">
+              {{ categories[activeCategory()].label }}
+            </span>
+          </div>
+          <div class="card-glow"
+            [style.background]="categories[activeCategory()].color">
+          </div>
+        </div>
+
+        <!-- Orbiting mini cards -->
+        @for (cat of categories; track cat.name; let i = $index) {
+          <div class="orbit-card"
+            [class.orbit-active]="i === activeCategory()"
+            [style.--orbit-i]="i"
+            [style.--total]="categories.length"
+            [style.--color]="cat.color">
+            <!-- <div class="orbit-icon" [innerHTML]="cat.icon"
+              [style.color]="cat.color">
+            </div> -->
+            <div class="orbit-icon" [style.color]="cat.color">
+              <app-cat-icon [name]="cat.iconKey" />
+            </div>
+          </div>
+        }
+
+        <!-- Orbit ring -->
+        <div class="orbit-ring"></div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-dot"></div>
+  </div>
+
+</section>

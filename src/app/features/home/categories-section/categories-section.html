@@ -1,0 +1,44 @@
+<section class="cats-section">
+  <div class="cats-container">
+
+    <!-- Header -->
+    <div class="section-header">
+      <h2 class="section-title">Shop by category</h2>
+      <a routerLink="/products" class="view-all">
+        View all
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Grid -->
+    <div class="cats-grid">
+      @for (cat of categories; track cat.name) {
+        <a [routerLink]="cat.route" class="cat-card"
+          [style.--color]="cat.color">
+          <div class="cat-icon-wrap">
+            <!-- <div class="cat-icon" [innerHTML]="cat.icon"></div> -->
+             <div class="cat-icon">
+                <app-cat-icon [name]="cat.iconKey" />
+            </div>
+            <div class="cat-icon-glow"></div>
+          </div>
+          <div class="cat-info">
+            <span class="cat-name">{{ cat.name }}</span>
+            <span class="cat-count">{{ cat.count }}</span>
+          </div>
+          <div class="cat-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+          <div class="cat-shimmer"></div>
+        </a>
+      }
+    </div>
+
+  </div>
+</section>

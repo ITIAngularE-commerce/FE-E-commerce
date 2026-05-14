@@ -1,0 +1,230 @@
+.register-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Header ── */
+.auth-header { text-align: center; }
+
+.auth-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f5f0e8;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.auth-subtitle {
+  font-size: 0.875rem;
+  color: rgba(245, 240, 232, 0.45);
+}
+
+/* ── Role selector ── */
+.role-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.role-btn {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(245, 240, 232, 0.04);
+  border: 1px solid rgba(200, 169, 110, 0.15);
+  border-radius: 12px;
+  color: rgba(245, 240, 232, 0.5);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.role-btn:hover {
+  background: rgba(200, 169, 110, 0.08);
+  color: #f5f0e8;
+}
+
+.role-active {
+  background: rgba(200, 169, 110, 0.12) !important;
+  border-color: #c8a96e !important;
+  color: #c8a96e !important;
+}
+
+/* ── Form ── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(245, 240, 232, 0.65);
+}
+
+.field-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-icon {
+  position: absolute;
+  left: 14px;
+  color: rgba(245, 240, 232, 0.3);
+  pointer-events: none;
+}
+
+.field-input {
+  width: 100%;
+  height: 44px;
+  background: rgba(245, 240, 232, 0.05);
+  border: 1px solid rgba(200, 169, 110, 0.18);
+  border-radius: 12px;
+  padding: 0 44px;
+  color: #f5f0e8;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.field-input::placeholder {
+  color: rgba(245, 240, 232, 0.2);
+}
+
+.field-input:focus {
+  border-color: rgba(200, 169, 110, 0.55);
+  background: rgba(200, 169, 110, 0.06);
+  box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.1);
+}
+
+.toggle-pw {
+  position: absolute;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: rgba(245, 240, 232, 0.35);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.toggle-pw:hover { color: #c8a96e; }
+
+/* ── Submit ── */
+.submit-btn {
+  height: 46px;
+  background: #c8a96e;
+  color: #0d1b2a;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+
+.submit-btn:hover {
+  background: #d4b87a;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(200, 169, 110, 0.25);
+}
+
+.submit-btn.loading {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(13, 27, 42, 0.3);
+  border-top-color: #0d1b2a;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Divider ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(245, 240, 232, 0.2);
+  font-size: 0.78rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(245, 240, 232, 0.1);
+}
+
+/* ── Social ── */
+.social-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.social-login-btn {
+  height: 42px;
+  background: rgba(245, 240, 232, 0.05);
+  border: 1px solid rgba(200, 169, 110, 0.15);
+  border-radius: 12px;
+  color: rgba(245, 240, 232, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.social-login-btn:hover {
+  background: rgba(200, 169, 110, 0.08);
+  border-color: rgba(200, 169, 110, 0.3);
+  color: #f5f0e8;
+}
+
+/* ── Footer ── */
+.auth-footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(245, 240, 232, 0.4);
+}
+
+.auth-link {
+  color: #c8a96e;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.auth-link:hover { color: #d4b87a; }

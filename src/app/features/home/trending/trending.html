@@ -1,0 +1,126 @@
+<section class="trending-section">
+
+  <!-- Background -->
+  <div class="trending-bg">
+    <svg class="bg-svg" viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg">
+      <path class="svg-wave tw1"
+        d="M0,200 C300,80 600,300 900,150 C1050,80 1150,200 1200,180"/>
+      <path class="svg-wave tw2"
+        d="M0,350 C200,250 500,420 750,300 C950,200 1100,350 1200,320"/>
+      <path class="svg-wave tw3"
+        d="M50,100 C250,200 550,50 800,180 C1000,280 1150,120 1200,100"/>
+    </svg>
+    <div class="tdot td1"></div>
+    <div class="tdot td2"></div>
+    <div class="tdot td3"></div>
+    <div class="tdot td4"></div>
+    <div class="tdot td5"></div>
+  </div>
+
+  <div class="trending-container">
+
+    <!-- Header -->
+    <div class="section-header">
+      <div class="title-wrap">
+        <h2 class="section-title">Trending now</h2>
+        <span class="fire">🔥</span>
+      </div>
+      <a routerLink="/products" class="view-all">
+        View all
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Grid -->
+    <div class="trending-grid">
+      @for (product of products; track product.id) {
+        <a [routerLink]="['/products', product.id]" class="t-card">
+
+          <!-- Hot indicator -->
+          @if (product.hot) {
+            <div class="hot-bar"></div>
+          }
+
+          <!-- Badge -->
+          @if (product.badge) {
+            <span class="product-badge"
+              [class.badge-sale]="product.badge === 'Sale'"
+              [class.badge-new]="product.badge === 'New'">
+              {{ product.badge }}
+            </span>
+          }
+
+          <!-- Wishlist -->
+          <button class="wishlist-btn" (click)="$event.preventDefault()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06
+                a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+                1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+
+          <!-- Image -->
+          <div class="t-img">
+            <div class="img-inner">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <div class="img-glow"></div>
+          </div>
+
+          <!-- Info -->
+          <div class="t-info">
+            <span class="t-seller">by {{ product.seller }}</span>
+            <h3 class="t-name">{{ product.name }}</h3>
+
+            <div class="t-rating">
+              <div class="stars">
+                @for (s of getStars(product.rating); track s) {
+                  <svg width="11" height="11" viewBox="0 0 24 24"
+                    [class.star-full]="isFullStar(product.rating, s)"
+                    [class.star-empty]="!isFullStar(product.rating, s)">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14
+                      18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27
+                      8.91 8.26 12 2"
+                      stroke="currentColor" stroke-width="1.5"
+                      [attr.fill]="isFullStar(product.rating, s) ? 'currentColor' : 'none'"/>
+                  </svg>
+                }
+              </div>
+              <span class="t-count">({{ product.reviews }})</span>
+            </div>
+
+            <div class="t-price">
+              <span class="price-current">${{ product.price }}</span>
+              @if (product.oldPrice) {
+                <span class="price-old">${{ product.oldPrice }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Add to cart -->
+          <button class="add-to-cart" (click)="$event.preventDefault()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72
+                a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            Add to cart
+          </button>
+
+          <div class="glass-shimmer"></div>
+        </a>
+      }
+    </div>
+
+  </div>
+</section>
