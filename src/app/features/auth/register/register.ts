@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../core/services/auth.service';
+import { RegisterRequest } from '../../../interfaces/auth.interface';
 
 @Component({
   selector: 'app-register',
@@ -10,6 +12,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './register.css',
 })
 export class Register {
+  private authService = inject(AuthService);
+
   name = '';
   email = '';
   phone = '';
@@ -18,7 +22,7 @@ export class Register {
   showPassword = false;
   showConfirmPassword = false;
   isLoading = false;
-  role: 'customer' | 'seller' = 'customer';
+  role: 'Customer' | 'Seller' = 'Customer';
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -30,8 +34,20 @@ export class Register {
   onSubmit() {
     if (!this.name || !this.email || !this.password) return;
     if (this.password !== this.confirmPassword) return;
+
     this.isLoading = true;
-    // TODO: connect to auth service
-    setTimeout(() => (this.isLoading = false), 1500);
+
+    const body: RegisterRequest = {
+      fullName: this.name,
+      email: this.email,
+      password: this.password,
+      phoneNumber: this.phone,
+      role: this.role,
+    };
+
+    this.authService.register(body).subscribe({
+      next: () => (this.isLoading = false),
+      error: () => (this.isLoading = false),
+    });
   }
 }

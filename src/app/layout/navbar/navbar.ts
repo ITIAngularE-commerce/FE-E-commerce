@@ -1,6 +1,7 @@
-import { Component, signal, HostListener } from '@angular/core';
+import { Component, signal, HostListener, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,11 +11,13 @@ import { CommonModule } from '@angular/common';
   styleUrl: './navbar.css',
 })
 export class Navbar {
+  authService = inject(AuthService);
+
   isScrolled = signal(false);
   isMobileMenuOpen = signal(false);
   isUserMenuOpen = signal(false);
-  cartCount = signal(2);
-  wishlistCount = signal(3);
+  cartCount = signal(0);
+  wishlistCount = signal(0);
 
   categories = [
     { name: 'Electronics', route: '/products/electronics' },
@@ -29,11 +32,24 @@ export class Navbar {
     this.isScrolled.set(window.scrollY > 20);
   }
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(e: Event) {
+    const target = e.target as HTMLElement;
+    if (!target.closest('.user-menu-wrap')) {
+      this.isUserMenuOpen.set(false);
+    }
+  }
+
   toggleMobileMenu() {
     this.isMobileMenuOpen.update((v) => !v);
   }
 
   toggleUserMenu() {
     this.isUserMenuOpen.update((v) => !v);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.isUserMenuOpen.set(false);
   }
 }

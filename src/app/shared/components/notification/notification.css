@@ -1,0 +1,121 @@
+.notif-wrapper {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.notif-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+  animation: notif-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+@keyframes notif-in {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* Types */
+.notif-success {
+  background: rgba(26, 46, 69, 0.85);
+  border-color: rgba(52, 211, 153, 0.3);
+}
+.notif-success .notif-icon { color: #34d399; background: rgba(52,211,153,0.12); }
+.notif-success .notif-progress { background: #34d399; }
+
+.notif-error {
+  background: rgba(26, 46, 69, 0.85);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+.notif-error .notif-icon { color: #f87171; background: rgba(248,113,113,0.12); }
+.notif-error .notif-progress { background: #f87171; }
+
+.notif-warning {
+  background: rgba(26, 46, 69, 0.85);
+  border-color: rgba(200, 169, 110, 0.3);
+}
+.notif-warning .notif-icon { color: #c8a96e; background: rgba(200,169,110,0.12); }
+.notif-warning .notif-progress { background: #c8a96e; }
+
+.notif-info {
+  background: rgba(26, 46, 69, 0.85);
+  border-color: rgba(79, 156, 249, 0.3);
+}
+.notif-info .notif-icon { color: #4f9cf9; background: rgba(79,156,249,0.12); }
+.notif-info .notif-progress { background: #4f9cf9; }
+
+/* Icon */
+.notif-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Content */
+.notif-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #f5f0e8;
+}
+
+.notif-message {
+  font-size: 0.8rem;
+  color: rgba(245,240,232,0.55);
+  line-height: 1.4;
+}
+
+/* Close */
+.notif-close {
+  background: transparent;
+  border: none;
+  color: rgba(245,240,232,0.3);
+  cursor: pointer;
+  padding: 2px;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.notif-close:hover { color: #f5f0e8; }
+
+/* Progress bar */
+.notif-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  animation: progress-shrink 4s linear forwards;
+  border-radius: 0 0 16px 16px;
+}
+
+@keyframes progress-shrink {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
