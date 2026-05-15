@@ -68,6 +68,9 @@
         <button class="tab-btn" [class.active]="activeTab() === 'security'" (click)="setTab('security')">
             <span class="tab-icon">🔒</span> Security
         </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'orders'" (click)="setTab('orders')">
+            <span class="tab-icon">📦</span> Orders
+        </button>
     </div>
 
     <!-- ── TAB: Personal Info ── -->
@@ -294,5 +297,17 @@
         </div>
     </div>
     }
+    }
+
+    @if (activeTab() === 'orders') {
+    <div class="tab-content animate-in">
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">My Orders</h2>
+                <p class="section-sub">Track and manage your orders</p>
+            </div>
+            <app-order-list />
+        </div>
+    </div>
     }
 </div>

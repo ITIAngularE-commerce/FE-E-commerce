@@ -1,3 +1,4 @@
+import { OrderListComponent } from './features/orders/order-list.component/order-list.component';
 import { ProfileComponent } from './features/user/profile/profile.component/profile.component';
 import { Routes } from '@angular/router';
 import { MainLayout } from './layout/main-layout/main-layout';
@@ -28,12 +29,12 @@ export const routes: Routes = [
         canActivate: [authGuard],
         loadComponent: () => import('./features/cart/cart-page/cart-page').then((m) => m.CartPage),
       },
-      // {
-      //   path: 'orders',
-      //   canActivate: [authGuard],
-      //   loadComponent: () =>
-      //     import('./features/orders/order-list/order-list').then((m) => m.OrderList),
-      // },
+      {
+        path: 'orders',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/orders/order-list.component/order-list.component').then((m) => m.OrderListComponent),
+      },
       // {
       //   path: 'orders/:id',
       //   canActivate: [authGuard],

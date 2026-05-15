@@ -3,12 +3,13 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { Address, UserProfile } from '../../../../interfaces/profile.interface';
+import { OrderListComponent } from '../../../orders/order-list.component/order-list.component';
 
-type ActiveTab = 'info' | 'addresses' | 'security';
+type ActiveTab = 'info' | 'addresses' | 'security' | 'orders';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, OrderListComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
@@ -16,11 +17,13 @@ export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);
   private fb = inject(FormBuilder);
 
+  // ── Shared signal from service (single source of truth) ──────────────────
+  readonly profile = this.profileService.profile;
+  readonly isLoadingProfile = this.profileService.isLoadingProfile;
+
+  // ── Local UI state ────────────────────────────────────────────────────────
   activeTab = signal<ActiveTab>('info');
-  profile = signal<UserProfile | null>(null);
-  // profile = this.profileService.profile;
   addresses = signal<Address[]>([]);
-  isLoadingProfile = signal(true);
   isLoadingAddresses = signal(false);
   isSavingProfile = signal(false);
   isSavingAddress = signal(false);
@@ -35,12 +38,7 @@ export class ProfileComponent implements OnInit {
 
   userInitials = computed(() => {
     const name = this.profile()?.fullName ?? '';
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   });
 
   roleBadgeClass = computed(() => {
@@ -52,7 +50,11 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForms();
-    this.loadProfile();
+    if (!this.profile()) {
+      this.loadProfile();
+    } else {
+      this.patchFormFromProfile();
+    }
     this.loadAddresses();
   }
 
@@ -61,7 +63,6 @@ export class ProfileComponent implements OnInit {
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       phoneNumber: ['', [Validators.pattern(/^\+?[0-9\s\-]{7,15}$/)]],
     });
-
     this.addressForm = this.fb.group({
       street: ['', Validators.required],
       city: ['', Validators.required],
@@ -72,38 +73,32 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  // Syncs the form inputs with whatever is currently in the profile signal.
+  private patchFormFromProfile(): void {
+    const data = this.profile();
+    if (!data) return;
+    this.profileForm.patchValue({
+      fullName: data.fullName ?? '',
+      phoneNumber:
+        data.phoneNumber && data.phoneNumber !== 'string'
+          ? data.phoneNumber
+          : '',
+    });
+  }
+
   loadProfile(): void {
-    this.isLoadingProfile.set(true);
     this.profileError.set(null);
     this.profileService.getProfile().subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.profile.set(res.data);
-          this.profileForm.patchValue({
-            fullName: res.data.fullName,
-            // phoneNumber: res.data.phoneNumber === 'string' ? '' : res.data.phoneNumber,
-            phoneNumber: typeof res.data.phoneNumber === 'string' ? res.data.phoneNumber : '',
-          });
-        }
-        this.isLoadingProfile.set(false);
-      },
-      error: () => {
-        this.profileError.set('Failed to load profile. Please try again.');
-        this.isLoadingProfile.set(false);
-      },
+      next: () => this.patchFormFromProfile(),
+      error: () => this.profileError.set('Failed to load profile. Please try again.'),
     });
   }
 
   loadAddresses(): void {
     this.isLoadingAddresses.set(true);
     this.profileService.getAddresses().subscribe({
-      next: (res) => {
-        this.addresses.set(res.data ?? []);
-        this.isLoadingAddresses.set(false);
-      },
-      error: () => {
-        this.isLoadingAddresses.set(false);
-      },
+      next: (res) => { this.addresses.set(res.data ?? []); this.isLoadingAddresses.set(false); },
+      error: () => this.isLoadingAddresses.set(false),
     });
   }
 
@@ -115,12 +110,21 @@ export class ProfileComponent implements OnInit {
   saveProfile(): void {
     if (this.profileForm.invalid) return;
     this.isSavingProfile.set(true);
-    this.successMessage.set(null);
-    this.profileService.updateProfile(this.profileForm.value).subscribe({
+    this.profileError.set(null);
+
+    const submitted: { fullName: string; phoneNumber: string } =
+      this.profileForm.value;
+
+    this.profileService.updateProfile(submitted).subscribe({
       next: (res) => {
         if (res.success) {
-          this.profile.set(res.data);
+          this.profileForm.patchValue({
+            fullName: res.data?.fullName ?? submitted.fullName,
+            phoneNumber: res.data?.phoneNumber ?? submitted.phoneNumber,
+          });
+
           this.showSuccess('Profile updated successfully!');
+
         }
         this.isSavingProfile.set(false);
       },
@@ -180,10 +184,7 @@ export class ProfileComponent implements OnInit {
 
   setDefault(id: string): void {
     this.profileService.setDefaultAddress(id).subscribe({
-      next: () => {
-        this.loadAddresses();
-        this.showSuccess('Default address updated.');
-      },
+      next: () => { this.loadAddresses(); this.showSuccess('Default address updated.'); },
     });
   }
 
@@ -192,11 +193,11 @@ export class ProfileComponent implements OnInit {
     setTimeout(() => this.successMessage.set(null), 3500);
   }
 
-
   formatDate(iso: string): string {
     if (!iso) return 'N/A';
     const normalized = iso.includes('Z') ? iso : iso + 'Z';
-    return new Date(normalized).toLocaleDateString('en-US', {
+    const d = new Date(normalized);
+    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString('en-US', {
       year: 'numeric', month: 'long', day: 'numeric',
     });
   }
