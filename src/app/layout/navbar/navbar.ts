@@ -1,7 +1,9 @@
-import { Component, signal, HostListener, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, signal, HostListener, inject, OnInit } from '@angular/core';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { CategoryService } from '../../services/category.service';
+import { Category } from '../../interfaces/category.interface';
 
 @Component({
   selector: 'app-navbar',
@@ -10,22 +12,23 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
+export class Navbar implements OnInit {
   authService = inject(AuthService);
+  private router = inject(Router);
+  private catSvc = inject(CategoryService);
 
   isScrolled = signal(false);
   isMobileMenuOpen = signal(false);
   isUserMenuOpen = signal(false);
   cartCount = signal(0);
   wishlistCount = signal(0);
+  categories = signal<Category[]>([]);
 
-  categories = [
-    { name: 'Electronics', route: '/products/electronics' },
-    { name: 'Fashion', route: '/products/fashion' },
-    { name: 'Home & Living', route: '/products/home' },
-    { name: 'Beauty', route: '/products/beauty' },
-    { name: 'Sports', route: '/products/sports' },
-  ];
+  ngOnInit() {
+    this.catSvc.getAll().subscribe({
+      next: (res) => this.categories.set(res.data),
+    });
+  }
 
   @HostListener('window:scroll')
   onScroll() {
@@ -34,20 +37,22 @@ export class Navbar {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(e: Event) {
-    const target = e.target as HTMLElement;
-    if (!target.closest('.user-menu-wrap')) {
-      this.isUserMenuOpen.set(false);
+    if (!(e.target as HTMLElement).closest('.user-menu-wrap')) this.isUserMenuOpen.set(false);
+  }
+
+  onSearch(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      const value = (event.target as HTMLInputElement).value.trim();
+      if (value) this.router.navigate(['/products'], { queryParams: { Search: value } });
     }
   }
 
   toggleMobileMenu() {
     this.isMobileMenuOpen.update((v) => !v);
   }
-
   toggleUserMenu() {
     this.isUserMenuOpen.update((v) => !v);
   }
-
   logout() {
     this.authService.logout();
     this.isUserMenuOpen.set(false);
