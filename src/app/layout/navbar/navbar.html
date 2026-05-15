@@ -164,8 +164,11 @@
   <!-- Categories bar -->
   <div class="categories-bar">
     <div class="navbar-container">
-      @for (cat of categories; track cat.name) {
-        <a [routerLink]="cat.route" routerLinkActive="cat-active" class="cat-link">
+      @for (cat of categories(); track cat.id) {
+        <a [routerLink]="'/products'"
+          [queryParams]="{CategoryId: cat.id}"
+          routerLinkActive="cat-active"
+          class="cat-link">
           {{ cat.name }}
         </a>
       }
@@ -183,8 +186,10 @@
         </svg>
         <input type="text" placeholder="Search..." class="search-input"/>
       </div>
-      @for (cat of categories; track cat.name) {
-        <a [routerLink]="cat.route" class="mobile-item">{{ cat.name }}</a>
+      @for (cat of categories(); track cat.name) {
+        <a [routerLink]="'/products'"
+          [queryParams]="{CategoryId: cat.id}"
+          class="mobile-item">{{ cat.name }}</a>
       }
       <div class="mobile-divider"></div>
       @if (authService.isLoggedIn()) {
