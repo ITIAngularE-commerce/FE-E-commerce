@@ -1,5 +1,3 @@
-import { OrderListComponent } from './features/orders/order-list.component/order-list.component';
-import { ProfileComponent } from './features/user/profile/profile.component/profile.component';
 import { Routes } from '@angular/router';
 import { MainLayout } from './layout/main-layout/main-layout';
 import { AuthLayout } from './layout/auth-layout/auth-layout';
@@ -41,11 +39,11 @@ export const routes: Routes = [
       //   loadComponent: () =>
       //     import('./features/orders/order-detail/order-detail').then((m) => m.OrderDetail),
       // },
-      // {
-      //   path: 'wishlist',
-      //   canActivate: [authGuard],
-      //   loadComponent: () => import('./features/user/wishlist/wishlist').then((m) => m.Wishlist),
-      // },
+      {
+        path: 'wishlist',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/user/wishlist/wishlist').then((m) => m.Wishlist),
+      },
       {
         path: 'profile',
         canActivate: [authGuard],
@@ -57,12 +55,12 @@ export const routes: Routes = [
       //   loadComponent: () =>
       //     import('./features/seller/dashboard/seller-dashboard').then((m) => m.SellerDashboard),
       // },
-      // {
-      //   path: 'admin',
-      //   canActivate: [authGuard, roleGuard(['Admin'])],
-      //   loadComponent: () =>
-      //     import('./features/admin/dashboard/admin-dashboard').then((m) => m.AdminDashboard),
-      // },
+      {
+        path: 'admin',
+        canActivate: [authGuard, roleGuard(['Admin'])],
+        loadComponent: () =>
+          import('./features/admin/dashboard/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
+      },
     ],
   },
   {

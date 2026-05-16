@@ -8,6 +8,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { Product } from '../../../interfaces/product.interface';
 import { Review, ProductRating, CreateReviewRequest } from '../../../interfaces/review.interface';
 import { DatePipe, UpperCasePipe } from '@angular/common';
+import { WishlistService } from '../../../core/services/wishlist.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -22,6 +23,12 @@ export class ProductDetail implements OnInit {
   private reviewService = inject(ReviewService);
   authService = inject(AuthService);
   private notif = inject(NotificationService);
+
+
+  //wishlist
+  private wishlistService = inject(WishlistService);
+  isWishlisted = signal(false);
+  isTogglingWish = signal(false);
 
   product = signal<Product | null>(null);
   reviews = signal<Review[]>([]);
@@ -39,6 +46,12 @@ export class ProductDetail implements OnInit {
     this.loadProduct(id);
     this.loadReviews(id);
     this.loadRating(id);
+
+
+    // Check if product is in wishlist
+    this.wishlistService.check(id).subscribe({
+      next: (res) => this.isWishlisted.set(res.data),
+    });
   }
 
   loadProduct(id: number) {
@@ -109,4 +122,18 @@ export class ProductDetail implements OnInit {
   isFullStar(rating: number, i: number): boolean {
     return i < Math.floor(rating);
   }
+
+  toggleWishlist(): void {
+    const id = this.product()?.id;
+    if (!id) return;
+    this.isTogglingWish.set(true);
+    this.wishlistService.toggle(id).subscribe({
+      next: (res) => {
+        this.isWishlisted.set(res.data);
+        this.isTogglingWish.set(false);
+      },
+      error: () => this.isTogglingWish.set(false),
+    });
+  }
+
 }

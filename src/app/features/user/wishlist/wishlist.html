@@ -1,0 +1,133 @@
+<div class="wishlist-page">
+
+    <!-- Loading Skeleton -->
+    @if (isLoading()) {
+    <div class="page-header">
+        <div class="skeleton sk-title"></div>
+    </div>
+    <div class="wishlist-grid">
+        @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="skeleton-card">
+            <div class="skeleton sk-img"></div>
+            <div class="sk-body">
+                <div class="skeleton sk-line wide"></div>
+                <div class="skeleton sk-line medium"></div>
+                <div class="skeleton sk-line narrow"></div>
+                <div class="skeleton sk-btn"></div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+
+    @if (!isLoading()) {
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1 class="page-title">
+                <span class="heart-icon">♥</span>
+                My Wishlist
+            </h1>
+            @if (items().length > 0) {
+            <span class="count-badge">{{ items().length }} {{ items().length === 1 ? 'item' : 'items' }}</span>
+            }
+        </div>
+        @if (items().length > 0) {
+        <button class="btn-clear" (click)="clearWishlist()" [disabled]="isClearing()">
+            @if (isClearing()) { <span class="spinner"></span> Clearing… }
+            @else { 🗑 Clear all }
+        </button>
+        }
+    </div>
+
+    <!-- Toast -->
+    @if (successMessage()) {
+    <div class="toast toast-success"><span>✓</span> {{ successMessage() }}</div>
+    }
+    @if (error()) {
+    <div class="toast toast-error"><span>✕</span> {{ error() }}</div>
+    }
+
+    <!-- Empty State -->
+    @if (items().length === 0) {
+    <div class="empty-state">
+        <div class="empty-icon-ring">
+            <span class="empty-heart">♥</span>
+        </div>
+        <h2 class="empty-title">Your wishlist is empty</h2>
+        <p class="empty-sub">Save items you love and come back to them anytime.</p>
+        <a routerLink="/products" class="btn-primary">Browse products →</a>
+    </div>
+    }
+
+    <!-- Wishlist Grid -->
+    @if (items().length > 0) {
+    <div class="wishlist-grid">
+        @for (item of items(); track item.productId) {
+        <div class="wish-card" [class.removing]="removingId() === item.productId">
+
+            <!-- Remove Button -->
+            <button class="btn-remove-top" (click)="removeItem(item.productId)"
+                [disabled]="removingId() === item.productId" title="Remove from wishlist">
+                @if (removingId() === item.productId) {
+                <span class="spinner spinner-sm"></span>
+                } @else { ♥ }
+            </button>
+
+            <!-- Product Image -->
+            <a [routerLink]="['/products', item.productId]" class="card-img-link">
+                @if (item.imageUrl) {
+                <img [src]="item.imageUrl" [alt]="item.productName" class="card-img" />
+                } @else {
+                <div class="card-img-placeholder">📦</div>
+                }
+            </a>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <!-- Category -->
+                @if (item.categoryName) {
+                <span class="card-category">{{ item.categoryName }}</span>
+                }
+
+                <!-- Name -->
+                <a [routerLink]="['/products', item.productId]" class="card-name">
+                    {{ item.productName }}
+                </a>
+
+                <!-- Seller -->
+                @if (item.sellerName) {
+                <p class="card-seller">by {{ item.sellerName }}</p>
+                }
+
+                <!-- Price & Stock -->
+                <div class="card-price-row">
+                    <span class="card-price">${{ item.price.toFixed(2) }}</span>
+                    @if (item.stock > 0) {
+                    <span class="in-stock-dot">● In stock</span>
+                    } @else {
+                    <span class="out-stock-dot">● Out of stock</span>
+                    }
+                </div>
+
+                <!-- Actions -->
+                <div class="card-actions">
+                    <button class="btn-add-cart" [disabled]="item.stock === 0 || addingToCartId() === item.productId"
+                        (click)="addToCart(item)">
+                        @if (addingToCartId() === item.productId) {
+                        <span class="spinner spinner-dark"></span> Adding…
+                        } @else {
+                        🛒 Add to cart
+                        }
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        }
+    </div>
+    }
+
+    }
+</div>

@@ -1,0 +1,529 @@
+/* ══════════════════════════════════════════════
+   ShopNow — Wishlist Page
+   Theme: dark navy + gold/amber accent
+══════════════════════════════════════════════ */
+
+:host {
+    display: block;
+}
+
+:root,
+:host {
+    --navy-900: #0d1117;
+    --navy-800: #161b27;
+    --navy-700: #1e2535;
+    --navy-600: #252d40;
+    --navy-500: #2e3850;
+    --border: rgba(255, 255, 255, 0.07);
+    --border-h: rgba(255, 255, 255, 0.14);
+    --gold: #d4a843;
+    --gold-light: #e8c060;
+    --gold-dim: rgba(212, 168, 67, 0.15);
+    --gold-dim2: rgba(212, 168, 67, 0.08);
+    --text-primary: #f0f2f7;
+    --text-secondary: #8b95a8;
+    --text-muted: #5a6374;
+    --success: #3ecf8e;
+    --danger: #f16c75;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+}
+
+/* ── Page wrapper — top padding accounts for fixed navbar ── */
+.wishlist-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 115px 20px 80px;
+    /* 96px top = navbar height */
+    min-height: 100vh;
+}
+
+/* ── Skeleton ── */
+.skeleton {
+    background: linear-gradient(90deg,
+            var(--navy-700) 25%, var(--navy-600) 50%, var(--navy-700) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.sk-title {
+    height: 36px;
+    width: 220px;
+    border-radius: var(--radius-md);
+}
+
+.skeleton-card {
+    background: var(--navy-800);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.sk-img {
+    height: 200px;
+    border-radius: 0;
+}
+
+.sk-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sk-line {
+    height: 13px;
+}
+
+.sk-line.wide {
+    width: 80%;
+}
+
+.sk-line.medium {
+    width: 55%;
+}
+
+.sk-line.narrow {
+    width: 35%;
+}
+
+.sk-btn {
+    height: 38px;
+    border-radius: var(--radius-md);
+    margin-top: 4px;
+}
+
+/* ── Page Header ── */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.4px;
+}
+
+.heart-icon {
+    color: var(--danger);
+    font-size: 22px;
+}
+
+.count-badge {
+    background: var(--gold-dim);
+    border: 1px solid rgba(212, 168, 67, 0.3);
+    color: var(--gold-light);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+/* ── Toast ── */
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    animation: slide-in 0.25s ease;
+}
+
+.toast-success {
+    background: rgba(62, 207, 142, 0.1);
+    border: 1px solid rgba(62, 207, 142, 0.3);
+    color: var(--success);
+}
+
+.toast-error {
+    background: rgba(241, 108, 117, 0.1);
+    border: 1px solid rgba(241, 108, 117, 0.3);
+    color: var(--danger);
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateY(-8px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ── Empty State ── */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 80px 20px;
+    text-align: center;
+    background: var(--navy-800);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+}
+
+.empty-icon-ring {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(241, 108, 117, 0.08);
+    border: 2px solid rgba(241, 108, 117, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.empty-heart {
+    font-size: 40px;
+    color: var(--danger);
+    opacity: 0.6;
+}
+
+.empty-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.empty-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0 0 8px;
+    max-width: 300px;
+}
+
+/* ── Wishlist Grid ── */
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+/* ── Wish Card ── */
+.wish-card {
+    position: relative;
+    background: var(--navy-800);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.wish-card:hover {
+    border-color: var(--border-h);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.wish-card.removing {
+    opacity: 0.4;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+/* ── Remove (heart) button — top-right ── */
+.btn-remove-top {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(13, 17, 23, 0.7);
+    backdrop-filter: blur(6px);
+    color: var(--danger);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.btn-remove-top:hover:not(:disabled) {
+    background: rgba(241, 108, 117, 0.2);
+    transform: scale(1.1);
+}
+
+.btn-remove-top:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ── Card Image ── */
+.card-img-link {
+    display: block;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: var(--navy-700);
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.wish-card:hover .card-img {
+    transform: scale(1.04);
+}
+
+.card-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    opacity: 0.3;
+}
+
+/* ── Card Body ── */
+.card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex: 1;
+}
+
+.card-category {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--gold);
+    background: var(--gold-dim2);
+    border: 1px solid rgba(212, 168, 67, 0.2);
+    padding: 2px 8px;
+    border-radius: 20px;
+    align-self: flex-start;
+}
+
+.card-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.15s;
+}
+
+.card-name:hover {
+    color: var(--gold-light);
+}
+
+.card-seller {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.card-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.card-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--gold-light);
+}
+
+.in-stock-dot {
+    font-size: 11px;
+    color: var(--success);
+    font-weight: 500;
+}
+
+.out-stock-dot {
+    font-size: 11px;
+    color: var(--danger);
+    font-weight: 500;
+}
+
+/* ── Card Actions ── */
+.card-actions {
+    margin-top: auto;
+    padding-top: 10px;
+}
+
+.btn-add-cart {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    background: linear-gradient(135deg, var(--gold), #b8872a);
+    color: var(--navy-900);
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-add-cart:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-add-cart:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--gold), #b8872a);
+    color: var(--navy-900);
+    border: none;
+    padding: 12px 28px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: inherit;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(241, 108, 117, 0.3);
+    padding: 9px 16px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.btn-clear:hover:not(:disabled) {
+    background: rgba(241, 108, 117, 0.08);
+}
+
+.btn-clear:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* ── Spinners ── */
+.spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-top-color: var(--navy-900);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+}
+
+.spinner-sm {
+    width: 12px;
+    height: 12px;
+    border-color: rgba(241, 108, 117, 0.25);
+    border-top-color: var(--danger);
+}
+
+.spinner-dark {
+    border-color: rgba(0, 0, 0, 0.15);
+    border-top-color: var(--navy-900);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .wishlist-page {
+        padding: 88px 12px 60px;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+
+    .wishlist-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+    }
+
+    .card-img-link {
+        height: 160px;
+    }
+
+    .card-price {
+        font-size: 15px;
+    }
+}

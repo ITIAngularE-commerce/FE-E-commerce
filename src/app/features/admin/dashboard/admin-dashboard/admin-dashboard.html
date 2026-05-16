@@ -1,0 +1,396 @@
+<div class="admin-shell">
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-icon">🛡</span>
+            <span class="brand-text">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="nav-item" [class.nav-active]="activeTab() === 'dashboard'" (click)="setTab('dashboard')">
+                <span class="nav-icon">⊞</span> Dashboard
+            </button>
+            <button class="nav-item" [class.nav-active]="activeTab() === 'users'" (click)="setTab('users')">
+                <span class="nav-icon">👥</span> Users
+                @if (users().length > 0) {
+                <span class="nav-count">{{ users().length }}</span>
+                }
+            </button>
+            <button class="nav-item" [class.nav-active]="activeTab() === 'orders'" (click)="setTab('orders')">
+                <span class="nav-icon">📦</span> Orders
+                @if (orders().length > 0) {
+                <span class="nav-count">{{ orders().length }}</span>
+                }
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-label">ShopNow Admin</div>
+        </div>
+    </aside>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <main class="admin-main">
+
+        <!-- Global Toasts -->
+        @if (successMessage()) {
+        <div class="toast toast-success"><span>✓</span> {{ successMessage() }}</div>
+        }
+        @if (error()) {
+        <div class="toast toast-error"><span>✕</span> {{ error() }}</div>
+        }
+
+        <!-- ══════════════════════════════════════
+         TAB: DASHBOARD
+    ══════════════════════════════════════ -->
+        @if (activeTab() === 'dashboard') {
+        <div class="tab-view animate-in">
+
+            <div class="page-header">
+                <h1 class="page-title">Platform Overview</h1>
+                <span class="page-sub">Real-time statistics across ShopNow</span>
+            </div>
+
+            <!-- Stats Cards -->
+            @if (isLoadingStats()) {
+            <div class="stats-grid">
+                @for (i of [1,2,3,4]; track i) {
+                <div class="stat-card skeleton-card">
+                    <div class="skeleton sk-sm"></div>
+                    <div class="skeleton sk-lg"></div>
+                    <div class="skeleton sk-sm"></div>
+                </div>
+                }
+            </div>
+            } @else if (stats()) {
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--gold">💰</div>
+                    <div class="stat-body">
+                        <p class="stat-label">Total Revenue</p>
+                        <p class="stat-value">${{ stats()!.totalRevenue.toLocaleString() }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--blue">👥</div>
+                    <div class="stat-body">
+                        <p class="stat-label">Total Users</p>
+                        <p class="stat-value">{{ stats()!.totalUsers.toLocaleString() }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--green">📋</div>
+                    <div class="stat-body">
+                        <p class="stat-label">Total Orders</p>
+                        <p class="stat-value">{{ stats()!.totalOrders.toLocaleString() }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon--purple">🏷</div>
+                    <div class="stat-body">
+                        <p class="stat-label">Total Products</p>
+                        <p class="stat-value">{{ stats()!.totalProducts.toLocaleString() }}</p>
+                    </div>
+                </div>
+            </div>
+            }
+
+            <!-- Quick: Recent Users -->
+            <div class="section-card">
+                <div class="section-head">
+                    <h2 class="section-title">Recent Users</h2>
+                    <button class="btn-ghost btn-sm" (click)="setTab('users')">View all →</button>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (user of users().slice(0,5); track user.id) {
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar">{{ userInitial(user.fullName) }}</div>
+                                        <span class="user-name">{{ user.fullName }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted">{{ user.email }}</td>
+                                <td><span class="role-chip" [class]="roleClass(user.role)">{{ user.role }}</span></td>
+                                <td class="text-muted">{{ formatDate(user.createdAt) }}</td>
+                                <td>
+                                    <span class="status-dot" [class.status-dot--active]="user.isActive">
+                                        {{ user.isActive ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Quick: Recent Orders -->
+            <div class="section-card">
+                <div class="section-head">
+                    <h2 class="section-title">Recent Orders</h2>
+                    <button class="btn-ghost btn-sm" (click)="setTab('orders')">View all →</button>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tracking</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (order of orders().slice(0,5); track order.id) {
+                            <tr>
+                                <td><span class="tracking-code">{{ order.trackingCode }}</span></td>
+                                <td class="text-muted">{{ order.items.length }} item(s)</td>
+                                <td class="text-gold">${{ order.total.toFixed(2) }}</td>
+                                <td class="text-muted">{{ formatDate(order.createdAt) }}</td>
+                                <td><span class="status-chip" [class]="statusClass(order.status)">{{ order.status
+                                        }}</span></td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        }
+
+        <!-- ══════════════════════════════════════
+         TAB: USERS
+    ══════════════════════════════════════ -->
+        @if (activeTab() === 'users') {
+        <div class="tab-view animate-in">
+
+            <div class="page-header">
+                <h1 class="page-title">User Management</h1>
+                <span class="page-sub">{{ filteredUsers().length }} of {{ users().length }} users</span>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+                <div class="search-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input class="search-input" type="text" placeholder="Search by name or email…"
+                        [value]="userSearch()" (input)="userSearch.set($any($event.target).value)" />
+                </div>
+                <div class="role-filters">
+                    @for (role of roleOptions; track role) {
+                    <button class="filter-chip" [class.filter-chip--active]="userRoleFilter() === role"
+                        (click)="userRoleFilter.set(role)">
+                        {{ role }}
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="section-card">
+                @if (isLoadingUsers()) {
+                <div class="loading-rows">
+                    @for (i of [1,2,3,4,5]; track i) {
+                    <div class="skeleton-row">
+                        <div class="skeleton sk-avatar"></div>
+                        <div class="skeleton sk-med"></div>
+                        <div class="skeleton sk-sm"></div>
+                        <div class="skeleton sk-sm"></div>
+                    </div>
+                    }
+                </div>
+                } @else if (filteredUsers().length === 0) {
+                <div class="empty-state">
+                    <span class="empty-icon">👥</span>
+                    <p>No users found</p>
+                </div>
+                } @else {
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (user of filteredUsers(); track user.id) {
+                            <tr [class.row-inactive]="!user.isActive">
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar" [class.avatar-inactive]="!user.isActive">
+                                            {{ userInitial(user.fullName) }}
+                                        </div>
+                                        <span class="user-name">{{ user.fullName }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted">{{ user.email }}</td>
+                                <td class="text-muted">{{ user.phoneNumber || '—' }}</td>
+                                <td><span class="role-chip" [class]="roleClass(user.role)">{{ user.role }}</span></td>
+                                <td class="text-muted">{{ formatDate(user.createdAt) }}</td>
+                                <td>
+                                    <span class="status-dot" [class.status-dot--active]="user.isActive">
+                                        ● {{ user.isActive ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn-toggle" [class.btn-toggle--danger]="user.isActive"
+                                        [class.btn-toggle--success]="!user.isActive"
+                                        [disabled]="togglingUserId() === user.id" (click)="toggleUser(user)">
+                                        @if (togglingUserId() === user.id) {
+                                        <span class="spinner spinner-sm"></span>
+                                        } @else {
+                                        {{ user.isActive ? 'Deactivate' : 'Activate' }}
+                                        }
+                                    </button>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                }
+            </div>
+
+        </div>
+        }
+
+        <!-- ══════════════════════════════════════
+         TAB: ORDERS
+    ══════════════════════════════════════ -->
+        @if (activeTab() === 'orders') {
+        <div class="tab-view animate-in">
+
+            <div class="page-header">
+                <h1 class="page-title">Order Management</h1>
+                <span class="page-sub">{{ filteredOrders().length }} of {{ orders().length }} orders</span>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+                <div class="search-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input class="search-input" type="text" placeholder="Search by tracking code or ID…"
+                        [value]="orderSearch()" (input)="orderSearch.set($any($event.target).value)" />
+                </div>
+                <div class="role-filters">
+                    @for (s of orderFilterOptions; track s) {
+                    <button class="filter-chip" [class.filter-chip--active]="orderStatusFilter() === s"
+                        (click)="orderStatusFilter.set(s)">
+                        {{ s }}
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Orders List -->
+            <div class="section-card">
+                @if (isLoadingOrders()) {
+                <div class="loading-rows">
+                    @for (i of [1,2,3]; track i) {
+                    <div class="skeleton-row">
+                        <div class="skeleton sk-med"></div>
+                        <div class="skeleton sk-sm"></div>
+                        <div class="skeleton sk-sm"></div>
+                        <div class="skeleton sk-lg"></div>
+                    </div>
+                    }
+                </div>
+                } @else if (filteredOrders().length === 0) {
+                <div class="empty-state">
+                    <span class="empty-icon">📦</span>
+                    <p>No orders found</p>
+                </div>
+                } @else {
+                <div class="orders-list">
+                    @for (order of filteredOrders(); track order.id) {
+                    <div class="order-row" [class.order-row--expanded]="expandedOrderId() === order.id">
+
+                        <!-- Row Header -->
+                        <div class="order-row-head" (click)="toggleOrderExpand(order.id)">
+                            <div class="order-row-left">
+                                <span class="tracking-code">{{ order.trackingCode }}</span>
+                                <span class="text-muted order-date">{{ formatDate(order.createdAt) }}</span>
+                                <span class="text-muted">{{ order.items.length }} item(s)</span>
+                                <span class="text-muted">💳 {{ order.paymentMethod }}</span>
+                            </div>
+                            <div class="order-row-right">
+                                <span class="text-gold order-total">${{ order.total.toFixed(2) }}</span>
+                                <span class="status-chip" [class]="statusClass(order.status)">{{ order.status }}</span>
+
+                                <!-- Status Dropdown (admin) -->
+                                <div class="status-select-wrap" [class.is-updating]="updatingOrderId() === order.id"
+                                    (click)="$event.stopPropagation()">
+                                    <select class="status-select" [value]="order.status"
+                                        [disabled]="updatingOrderId() === order.id"
+                                        (change)="changeOrderStatus(order.id, $any($event.target).value)">
+                                        @for (s of orderStatusOptions; track s) {
+                                        <option [value]="s" [selected]="order.status === s">{{ s }}</option>
+                                        }
+                                    </select>
+                                    @if (updatingOrderId() === order.id) {
+                                    <span class="spinner spinner-gold"></span>
+                                    }
+                                </div>
+
+                                <span class="expand-caret"
+                                    [class.expand-caret--open]="expandedOrderId() === order.id">›</span>
+                            </div>
+                        </div>
+
+                        <!-- Expanded Items -->
+                        @if (expandedOrderId() === order.id) {
+                        <div class="order-items-expand animate-in">
+                            <div class="order-items-grid">
+                                @for (item of order.items; track item.productId) {
+                                <div class="order-item-card">
+                                    @if (item.imageUrl) {
+                                    <img [src]="item.imageUrl" [alt]="item.productName" class="order-item-img" />
+                                    } @else {
+                                    <div class="order-item-img order-item-placeholder">📦</div>
+                                    }
+                                    <div class="order-item-info">
+                                        <p class="order-item-name">{{ item.productName }}</p>
+                                        <p class="text-muted">{{ item.quantity }} × ${{ item.unitPrice.toFixed(2) }}</p>
+                                    </div>
+                                    <span class="order-item-sub text-gold">${{ item.subtotal.toFixed(2) }}</span>
+                                </div>
+                                }
+                            </div>
+                            <div class="order-address">
+                                📍 {{ order.address.street }}, {{ order.address.city }}, {{ order.address.country }}
+                            </div>
+                        </div>
+                        }
+
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+
+        </div>
+        }
+
+    </main>
+</div>

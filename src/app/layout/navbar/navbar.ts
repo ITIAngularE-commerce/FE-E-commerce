@@ -1,7 +1,8 @@
-import { Component, signal, HostListener, inject } from '@angular/core';
+import { Component, signal, HostListener, inject, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { WishlistService } from '../../core/services/wishlist.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,14 +11,14 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
+export class Navbar implements OnInit {
   authService = inject(AuthService);
 
   isScrolled = signal(false);
   isMobileMenuOpen = signal(false);
   isUserMenuOpen = signal(false);
   cartCount = signal(0);
-  wishlistCount = signal(0);
+  // wishlistCount = signal(0);
 
   categories = [
     { name: 'Electronics', route: '/products/electronics' },
@@ -26,6 +27,14 @@ export class Navbar {
     { name: 'Beauty', route: '/products/beauty' },
     { name: 'Sports', route: '/products/sports' },
   ];
+
+  //wishlist
+  private wishlistService = inject(WishlistService);
+  wishlistCount = this.wishlistService.wishlistCount;
+
+  ngOnInit(): void {
+    this.wishlistService.getCount().subscribe();
+  }
 
   @HostListener('window:scroll')
   onScroll() {
