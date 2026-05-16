@@ -92,8 +92,8 @@ export const routes: Routes = [
       // {
       //   path: 'settings',
       //   loadComponent: () =>
-      //     import('./features/seller/settings/seller-settings')
-      //     .then(m => m.SellerSettings)
+      //     import('./features/seller/settings/settings')
+      //     .then(m => m.Settings)
       // },
     ]
   },
