@@ -26,7 +26,7 @@
     <div class="page-header">
         <div class="page-header-left">
             <h1 class="page-title">
-                <span class="heart-icon">♥</span>
+                <i class="fa-solid fa-heart heart-icon"></i>
                 My Wishlist
             </h1>
             @if (items().length > 0) {
@@ -36,28 +36,38 @@
         @if (items().length > 0) {
         <button class="btn-clear" (click)="clearWishlist()" [disabled]="isClearing()">
             @if (isClearing()) { <span class="spinner"></span> Clearing… }
-            @else { 🗑 Clear all }
+            @else {
+            <i class="fa-solid fa-trash"></i>
+            Clear all
+            }
         </button>
         }
     </div>
 
     <!-- Toast -->
     @if (successMessage()) {
-    <div class="toast toast-success"><span>✓</span> {{ successMessage() }}</div>
+    <div class="toast toast-success">
+        <i class="fa-solid fa-check"></i>
+        {{ successMessage() }}
+    </div>
     }
     @if (error()) {
-    <div class="toast toast-error"><span>✕</span> {{ error() }}</div>
+    <div class="toast toast-error">
+        <i class="fa-solid fa-xmark"></i>
+        {{ error() }}
+    </div>
     }
 
     <!-- Empty State -->
     @if (items().length === 0) {
     <div class="empty-state">
         <div class="empty-icon-ring">
-            <span class="empty-heart">♥</span>
+            <i class="fa-solid fa-heart empty-heart"></i>
         </div>
         <h2 class="empty-title">Your wishlist is empty</h2>
         <p class="empty-sub">Save items you love and come back to them anytime.</p>
-        <a routerLink="/products" class="btn-primary">Browse products →</a>
+        Browse products
+        <i class="fa-solid fa-arrow-right"></i>
     </div>
     }
 
@@ -72,7 +82,9 @@
                 [disabled]="removingId() === item.productId" title="Remove from wishlist">
                 @if (removingId() === item.productId) {
                 <span class="spinner spinner-sm"></span>
-                } @else { ♥ }
+                } @else {
+                <i class="fa-solid fa-heart"></i>
+                }
             </button>
 
             <!-- Product Image -->
@@ -80,7 +92,9 @@
                 @if (item.imageUrl) {
                 <img [src]="item.imageUrl" [alt]="item.productName" class="card-img" />
                 } @else {
-                <div class="card-img-placeholder">📦</div>
+                <div class="card-img-placeholder">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
                 }
             </a>
 
@@ -105,9 +119,15 @@
                 <div class="card-price-row">
                     <span class="card-price">${{ item.price.toFixed(2) }}</span>
                     @if (item.stock > 0) {
-                    <span class="in-stock-dot">● In stock</span>
+                    <span class="in-stock-dot">
+                        <i class="fa-solid fa-circle"></i>
+                        In stock
+                    </span>
                     } @else {
-                    <span class="out-stock-dot">● Out of stock</span>
+                    <span class="out-stock-dot">
+                        <i class="fa-solid fa-circle"></i>
+                        Out of stock
+                    </span>
                     }
                 </div>
 
@@ -118,7 +138,8 @@
                         @if (addingToCartId() === item.productId) {
                         <span class="spinner spinner-dark"></span> Adding…
                         } @else {
-                        🛒 Add to cart
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        Add to cart
                         }
                     </button>
                 </div>

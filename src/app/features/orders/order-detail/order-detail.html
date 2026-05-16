@@ -1,0 +1,312 @@
+<div class="order-detail-page">
+
+    <!-- ══ LOADING ══ -->
+    @if (isLoading()) {
+    <div class="skeleton-page">
+        <div class="skeleton sk-back"></div>
+        <div class="skeleton sk-title"></div>
+        <div class="detail-grid">
+            <div class="left-col">
+                <div class="skeleton-card">
+                    <div class="skeleton sk-block"></div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton sk-block-sm"></div>
+                </div>
+            </div>
+            <div class="right-col">
+                <div class="skeleton-card">
+                    <div class="skeleton sk-block-sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- ══ ERROR ══ -->
+    @if (!isLoading() && error() && !order()) {
+    <div class="error-page">
+        <div class="error-icon">
+            <i class="fa-solid fa-box-open"></i>
+        </div>
+        <h2 class="error-title">Order not found</h2>
+        <p class="error-sub">{{ error() }}</p>
+        <button class="btn-primary" (click)="goBack()">← Go back</button>
+    </div>
+    }
+
+    <!-- ══ CONTENT ══ -->
+    @if (!isLoading() && order()) {
+    <div class="animate-in">
+
+        <!-- Back + header -->
+        <div class="page-top">
+            <button class="btn-back" (click)="goBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="back-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Back
+            </button>
+        </div>
+
+        <!-- Toast -->
+        @if (successMessage()) {
+        <div class="toast toast-success">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                style="width:15px;height:15px;flex-shrink:0">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            {{ successMessage() }}
+        </div>
+        }
+        @if (error()) {
+        <div class="toast toast-error">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:15px;height:15px;flex-shrink:0">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            {{ error() }}
+        </div>
+        }
+
+        <!-- Page title row -->
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1 class="page-title">Order <span class="title-id">#{{ order()!.id }}</span></h1>
+                <p class="page-sub">Placed on {{ formatDate(order()!.createdAt) }}</p>
+            </div>
+            <div class="page-header-right">
+                <span class="tracking-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="width:13px;height:13px">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    {{ order()!.trackingCode }}
+                </span>
+                <span class="status-chip" [class]="statusClass(order()!.status)">{{ order()!.status }}</span>
+            </div>
+        </div>
+
+        <!-- ══ Order Progress Tracker ══ -->
+        @if (!isCancelled()) {
+        <div class="card progress-card">
+            <div class="progress-steps">
+                @for (step of progressSteps; track step; let i = $index) {
+                <div class="progress-step" [class.step-done]="i <= currentStepIndex()"
+                    [class.step-current]="i === currentStepIndex()">
+                    <div class="step-dot">
+                        @if (i < currentStepIndex()) { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" class="check-icon">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            } @else {
+                            <span class="step-num">{{ i + 1 }}</span>
+                            }
+                    </div>
+                    @if (i < progressSteps.length - 1) { <div class="step-line"
+                        [class.line-done]="i < currentStepIndex()">
+                </div>
+                }
+                <span class="step-label">{{ step }}</span>
+            </div>
+            }
+        </div>
+    </div>
+    }
+
+    @if (isCancelled()) {
+    <div class="card cancelled-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="width:20px;height:20px;flex-shrink:0">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        This order has been cancelled.
+    </div>
+    }
+
+    <!-- ══ Main grid ══ -->
+    <div class="detail-grid">
+
+        <!-- ── LEFT: items + address ── -->
+        <div class="left-col">
+
+            <!-- Items -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            class="card-title-icon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+                        </svg>
+                        Items ({{ order()!.items.length }})
+                    </h2>
+                </div>
+
+                <div class="items-list">
+                    @for (item of order()!.items; track item.productId) {
+                    <div class="item-row">
+                        @if (item.imageUrl) {
+                        <img [src]="item.imageUrl" [alt]="item.productName" class="item-img" />
+                        } @else {
+                        <div class="item-img item-img-placeholder">
+                            <i class="fa-solid fa-box"></i>
+                        </div>
+                        }
+                        <div class="item-info">
+                            <p class="item-name">{{ item.productName }}</p>
+                            <p class="item-unit">Unit price: <span class="text-gold">${{ item.unitPrice.toFixed(2)
+                                    }}</span></p>
+                        </div>
+                        <div class="item-right">
+                            <span class="item-qty">×{{ item.quantity }}</span>
+                            <span class="item-subtotal">${{ item.subtotal.toFixed(2) }}</span>
+                        </div>
+                    </div>
+                    }
+                </div>
+
+                <!-- Order total -->
+                <div class="order-total-row">
+                    <span class="total-label">Order total</span>
+                    <span class="total-value">${{ order()!.total.toFixed(2) }}</span>
+                </div>
+            </div>
+
+            <!-- Delivery address -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            class="card-title-icon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Delivery address
+                    </h2>
+                </div>
+                <div class="address-block">
+                    <p class="address-line">{{ order()!.address.street }}</p>
+                    <p class="address-line muted">{{ order()!.address.city }}</p>
+                    <p class="address-line muted">{{ order()!.address.country }}</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── RIGHT: summary + actions ── -->
+        <div class="right-col">
+
+            <!-- Order summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            class="card-title-icon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Order summary
+                    </h2>
+                </div>
+
+                <div class="summary-rows">
+                    <div class="summary-row">
+                        <span class="summary-label">Order ID</span>
+                        <span class="summary-value">#{{ order()!.id }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Tracking code</span>
+                        <span class="summary-value tracking-mono">{{ order()!.trackingCode }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Payment</span>
+                        <span class="summary-value">
+                            <span class="payment-method">
+                                <i [class]="paymentIcon(order()!.paymentMethod)"></i>
+                                {{ order()!.paymentMethod }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Date placed</span>
+                        <span class="summary-value">{{ formatDate(order()!.createdAt) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Status</span>
+                        <span class="status-chip" [class]="statusClass(order()!.status)">{{ order()!.status }}</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row summary-total">
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value text-gold">${{ order()!.total.toFixed(2) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ ADMIN: status control ══ -->
+            @if (isAdmin()) {
+            <div class="card admin-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            class="card-title-icon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Admin — Update status
+                    </h2>
+                </div>
+                <div class="admin-control">
+                    <label class="control-label">Change order status</label>
+                    <select class="status-select" [ngModel]="selectedStatus()"
+                        (ngModelChange)="selectedStatus.set($event)" [disabled]="isUpdatingStatus()">
+                        @for (s of orderStatusOptions; track s) {
+                        <option [value]="s">{{ s }}</option>
+                        }
+                    </select>
+                    <button class="btn-primary" [disabled]="selectedStatus() === order()!.status || isUpdatingStatus()"
+                        (click)="updateStatus()">
+                        @if (isUpdatingStatus()) {
+                        <span class="spinner"></span> Updating…
+                        } @else {
+                        Apply status
+                        }
+                    </button>
+                </div>
+            </div>
+            }
+
+            <!-- ══ CUSTOMER: cancel button ══ -->
+            @if (!isAdmin() && canCancel()) {
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            class="card-title-icon danger-icon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        Cancel order
+                    </h2>
+                </div>
+                <p class="cancel-hint">You can cancel this order while it is still Pending or Processing.</p>
+                <button class="btn-danger-full" [disabled]="isCancelling()" (click)="cancelOrder()">
+                    @if (isCancelling()) {
+                    <span class="spinner spinner-danger"></span> Cancelling…
+                    } @else {
+                    Cancel this order
+                    }
+                </button>
+            </div>
+            }
+
+        </div>
+    </div>
+
+</div>
+}
+</div>

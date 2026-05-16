@@ -1,121 +1,157 @@
-<div class="orders-container">
+<div class="orders-page">
 
-    <!-- Success Toast -->
-    @if (successMessage()) {
-    <div class="toast toast-success">
-        <span>✓</span> {{ successMessage() }}
-    </div>
-    }
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <p class="page-subtitle">Track and manage your purchases</p>
+            <h1 class="page-title">My Orders</h1>
+        </div>
 
-    <!-- Error Banner -->
-    @if (error()) {
-    <div class="error-banner">{{ error() }}</div>
-    }
-
-    <!-- Loading Skeleton -->
-    @if (isLoading()) {
-    <div class="skeleton-list">
-        @for (i of [1,2,3]; track i) {
-        <div class="skeleton-order-card">
-            <div class="skeleton-row">
-                <div class="skeleton sk-short"></div>
-                <div class="skeleton sk-chip"></div>
+        @if (!isLoading() && orders().length > 0) {
+        <div class="orders-stats">
+            <div class="stat-card">
+                <span class="stat-value">{{ orders().length }}</span>
+                <span class="stat-label">Total Orders</span>
             </div>
-            <div class="skeleton sk-medium"></div>
-            <div class="skeleton sk-long"></div>
+
+            <div class="stat-card">
+                <span class="stat-value">
+                    {{ orders().filter(o => o.status === 'Delivered').length }}
+                </span>
+                <span class="stat-label">Delivered</span>
+            </div>
         </div>
         }
     </div>
-    }
+    <div class="orders-container">
 
-    <!-- Empty State -->
-    @if (!isLoading() && orders().length === 0 && !error()) {
-    <div class="empty-orders">
-        <div class="empty-icon">📦</div>
-        <p class="empty-title">No orders yet</p>
-        <p class="empty-sub">Your order history will appear here once you place an order.</p>
-    </div>
-    }
+        <!-- Success Toast -->
+        @if (successMessage()) {
+        <div class="toast toast-success">
+            <i class="fa-solid fa-check toast-icon"></i> {{ successMessage() }}
+        </div>
+        }
 
-    <!-- Orders List -->
-    @if (!isLoading() && orders().length > 0) {
-    <div class="orders-list">
-        @for (order of orders(); track order.id) {
-        <div class="order-card" [class.expanded]="expandedOrderId() === order.id">
+        <!-- Error Banner -->
+        @if (error()) {
+        <div class="error-banner">{{ error() }}</div>
+        }
 
-            <!-- Order Header Row -->
-            <div class="order-header" (click)="toggleExpand(order.id)">
-                <div class="order-header-left">
-                    <span class="order-id">#{{ order.trackingCode }}</span>
-                    <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+        <!-- Loading Skeleton -->
+        @if (isLoading()) {
+        <div class="skeleton-list">
+            @for (i of [1,2,3]; track i) {
+            <div class="skeleton-order-card">
+                <div class="skeleton-row">
+                    <div class="skeleton sk-short"></div>
+                    <div class="skeleton sk-chip"></div>
+                </div>
+                <div class="skeleton sk-medium"></div>
+                <div class="skeleton sk-long"></div>
+            </div>
+            }
+        </div>
+        }
+
+        <!-- Empty State -->
+        @if (!isLoading() && orders().length === 0 && !error()) {
+        <div class="empty-orders">
+            <div class="empty-icon">
+                <i class="fa-solid fa-box-open"></i>
+            </div>
+            <p class="empty-title">No orders yet</p>
+            <p class="empty-sub">Your order history will appear here once you place an order.</p>
+        </div>
+        }
+
+        <!-- Orders List -->
+        @if (!isLoading() && orders().length > 0) {
+        <div class="orders-list">
+            @for (order of orders(); track order.id) {
+            <div class="order-card" [class.expanded]="expandedOrderId() === order.id">
+
+                <!-- Order Header Row -->
+                <div class="order-header" (click)="toggleExpand(order.id)">
+                    <div class="order-header-left">
+                        <span class="order-id">#{{ order.trackingCode }}</span>
+                        <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+                    </div>
+
+                    <div class="order-header-right">
+                        <span class="btn-view" (click)="viewOrderDetails(order.id)">view</span>
+                        <span class="status-chip" [class]="statusClass(order.status)">
+                            <i [class]="statusIcon(order.status)"></i>
+                            {{ order.status }}
+                        </span>
+                        <span class="order-total">${{ order.total.toFixed(2) }}</span>
+                        <i class="fa-solid fa-chevron-right expand-icon"
+                            [class.rotated]="expandedOrderId() === order.id"></i>
+                    </div>
                 </div>
 
-                <div class="order-header-right">
-                    <span class="status-chip" [class]="statusClass(order.status)">
-                        {{ statusIcon(order.status) }} {{ order.status }}
+                <!-- Order Summary (always visible) -->
+                <div class="order-summary-row">
+                    <span class="summary-items">
+                        {{ order.items.length }} {{ order.items.length === 1 ? 'item' : 'items' }}
                     </span>
-                    <span class="order-total">${{ order.total.toFixed(2) }}</span>
-                    <span class="expand-icon" [class.rotated]="expandedOrderId() === order.id">›</span>
+                    <span class="summary-payment">
+                        <i class="fa-solid fa-credit-card"></i>
+                        {{ order.paymentMethod }}
+                    </span>
+                    <span class="summary-address">
+                        <i class="fa-solid fa-location-dot"></i>
+                        {{ order.address.street }}, {{ order.address.city }}
+                    </span>
                 </div>
-            </div>
 
-            <!-- Order Summary (always visible) -->
-            <div class="order-summary-row">
-                <span class="summary-items">
-                    {{ order.items.length }} {{ order.items.length === 1 ? 'item' : 'items' }}
-                </span>
-                <span class="summary-payment">
-                    💳 {{ order.paymentMethod }}
-                </span>
-                <span class="summary-address">
-                    📍 {{ order.address.street }}, {{ order.address.city }}
-                </span>
-            </div>
+                <!-- Expanded: Items Detail -->
+                @if (expandedOrderId() === order.id) {
+                <div class="order-items-section animate-in">
+                    <div class="items-label">Order items</div>
+                    <div class="order-items-list">
+                        @for (item of order.items; track item.productId) {
+                        <div class="order-item-row">
+                            <div class="item-img-wrap">
+                                @if (item.imageUrl) {
+                                <img [src]="item.imageUrl" [alt]="item.productName" class="item-img" />
+                                } @else {
+                                <div class="item-img-placeholder">
+                                    <i class="fa-solid fa-box"></i>
+                                </div>
+                                }
+                            </div>
+                            <div class="item-details">
+                                <p class="item-name">{{ item.productName }}</p>
+                                <p class="item-meta">
+                                    {{ item.quantity }} × ${{ item.unitPrice.toFixed(2) }}
+                                </p>
+                            </div>
+                            <span class="item-subtotal">${{ item.subtotal.toFixed(2) }}</span>
+                        </div>
+                        }
+                    </div>
 
-            <!-- Expanded: Items Detail -->
-            @if (expandedOrderId() === order.id) {
-            <div class="order-items-section animate-in">
-                <div class="items-label">Order items</div>
-                <div class="order-items-list">
-                    @for (item of order.items; track item.productId) {
-                    <div class="order-item-row">
-                        <div class="item-img-wrap">
-                            @if (item.imageUrl) {
-                            <img [src]="item.imageUrl" [alt]="item.productName" class="item-img" />
+                    <!-- Cancel Button -->
+                    @if (canCancel(order.status)) {
+                    <div class="order-actions">
+                        <button class="btn-cancel" (click)="cancelOrder(order.id); $event.stopPropagation()"
+                            [disabled]="cancellingId() === order.id">
+                            @if (cancellingId() === order.id) {
+                            <span class="spinner"></span> Cancelling…
                             } @else {
-                            <div class="item-img-placeholder">📦</div>
+                            Cancel order
                             }
-                        </div>
-                        <div class="item-details">
-                            <p class="item-name">{{ item.productName }}</p>
-                            <p class="item-meta">
-                                {{ item.quantity }} × ${{ item.unitPrice.toFixed(2) }}
-                            </p>
-                        </div>
-                        <span class="item-subtotal">${{ item.subtotal.toFixed(2) }}</span>
+                        </button>
                     </div>
                     }
                 </div>
-
-                <!-- Cancel Button -->
-                @if (canCancel(order.status)) {
-                <div class="order-actions">
-                    <button class="btn-cancel" (click)="cancelOrder(order.id); $event.stopPropagation()"
-                        [disabled]="cancellingId() === order.id">
-                        @if (cancellingId() === order.id) {
-                        <span class="spinner"></span> Cancelling…
-                        } @else {
-                        Cancel order
-                        }
-                    </button>
-                </div>
                 }
+
             </div>
             }
-
         </div>
         }
+
     </div>
-    }
 
 </div>

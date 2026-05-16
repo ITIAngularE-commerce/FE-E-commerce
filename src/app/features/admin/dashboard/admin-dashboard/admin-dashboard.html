@@ -1,24 +1,48 @@
 <div class="admin-shell">
 
+    <!-- ══ Hamburger (mobile only) ══ -->
+    <button class="sidebar-toggle" (click)="toggleSidebar()" aria-label="Toggle menu">☰</button>
+
+    <!-- ══ Overlay (mobile only) ══ -->
+    @if (sidebarOpen()) {
+    <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+    }
+
     <!-- ══ SIDEBAR ══ -->
-    <aside class="sidebar">
+    <aside class="sidebar" [class.sidebar--open]="sidebarOpen()">
         <div class="sidebar-brand">
-            <span class="brand-icon">🛡</span>
+            <span class="brand-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </span>
             <span class="brand-text">Admin</span>
         </div>
 
         <nav class="sidebar-nav">
-            <button class="nav-item" [class.nav-active]="activeTab() === 'dashboard'" (click)="setTab('dashboard')">
-                <span class="nav-icon">⊞</span> Dashboard
+            <button class="nav-item" data-label="Dashboard" [class.nav-active]="activeTab() === 'dashboard'"
+                (click)="setTab('dashboard')">
+                <span class="nav-icon">
+                    <i class="fa-solid fa-table-columns"></i>
+                </span>
+                <span class="nav-label">Dashboard</span>
             </button>
-            <button class="nav-item" [class.nav-active]="activeTab() === 'users'" (click)="setTab('users')">
-                <span class="nav-icon">👥</span> Users
+
+            <button class="nav-item" data-label="Users" [class.nav-active]="activeTab() === 'users'"
+                (click)="setTab('users')">
+                <span class="nav-icon">
+                    <i class="fa-solid fa-users"></i>
+                </span>
+                <span class="nav-label">Users</span>
                 @if (users().length > 0) {
                 <span class="nav-count">{{ users().length }}</span>
                 }
             </button>
-            <button class="nav-item" [class.nav-active]="activeTab() === 'orders'" (click)="setTab('orders')">
-                <span class="nav-icon">📦</span> Orders
+
+            <button class="nav-item" data-label="Orders" [class.nav-active]="activeTab() === 'orders'"
+                (click)="setTab('orders')">
+                <span class="nav-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </span>
+                <span class="nav-label">Orders</span>
                 @if (orders().length > 0) {
                 <span class="nav-count">{{ orders().length }}</span>
                 }
@@ -66,28 +90,36 @@
             } @else if (stats()) {
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon stat-icon--gold">💰</div>
+                    <div class="stat-icon stat-icon--gold">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                    </div>
                     <div class="stat-body">
                         <p class="stat-label">Total Revenue</p>
                         <p class="stat-value">${{ stats()!.totalRevenue.toLocaleString() }}</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon stat-icon--blue">👥</div>
+                    <div class="stat-icon stat-icon--blue">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
                     <div class="stat-body">
                         <p class="stat-label">Total Users</p>
                         <p class="stat-value">{{ stats()!.totalUsers.toLocaleString() }}</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon stat-icon--green">📋</div>
+                    <div class="stat-icon stat-icon--green">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                    </div>
                     <div class="stat-body">
                         <p class="stat-label">Total Orders</p>
                         <p class="stat-value">{{ stats()!.totalOrders.toLocaleString() }}</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon stat-icon--purple">🏷</div>
+                    <div class="stat-icon stat-icon--purple">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
                     <div class="stat-body">
                         <p class="stat-label">Total Products</p>
                         <p class="stat-value">{{ stats()!.totalProducts.toLocaleString() }}</p>
@@ -187,7 +219,9 @@
             <!-- Filters -->
             <div class="filter-bar">
                 <div class="search-wrap">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
                     <input class="search-input" type="text" placeholder="Search by name or email…"
                         [value]="userSearch()" (input)="userSearch.set($any($event.target).value)" />
                 </div>
@@ -216,7 +250,9 @@
                 </div>
                 } @else if (filteredUsers().length === 0) {
                 <div class="empty-state">
-                    <span class="empty-icon">👥</span>
+                    <span class="empty-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </span>
                     <p>No users found</p>
                 </div>
                 } @else {
@@ -226,11 +262,11 @@
                             <tr>
                                 <th>User</th>
                                 <th>Email</th>
-                                <th>Phone</th>
+                                <th class="col-phone">Phone</th>
                                 <th>Role</th>
                                 <th>Joined</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                <th class="col-action">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -245,7 +281,7 @@
                                     </div>
                                 </td>
                                 <td class="text-muted">{{ user.email }}</td>
-                                <td class="text-muted">{{ user.phoneNumber || '—' }}</td>
+                                <td class="text-muted col-phone">{{ user.phoneNumber || '—' }}</td>
                                 <td><span class="role-chip" [class]="roleClass(user.role)">{{ user.role }}</span></td>
                                 <td class="text-muted">{{ formatDate(user.createdAt) }}</td>
                                 <td>
@@ -253,7 +289,7 @@
                                         ● {{ user.isActive ? 'Active' : 'Inactive' }}
                                     </span>
                                 </td>
-                                <td>
+                                <td class="col-action">
                                     <button class="btn-toggle" [class.btn-toggle--danger]="user.isActive"
                                         [class.btn-toggle--success]="!user.isActive"
                                         [disabled]="togglingUserId() === user.id" (click)="toggleUser(user)">
@@ -289,7 +325,9 @@
             <!-- Filters -->
             <div class="filter-bar">
                 <div class="search-wrap">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
                     <input class="search-input" type="text" placeholder="Search by tracking code or ID…"
                         [value]="orderSearch()" (input)="orderSearch.set($any($event.target).value)" />
                 </div>
@@ -318,7 +356,9 @@
                 </div>
                 } @else if (filteredOrders().length === 0) {
                 <div class="empty-state">
-                    <span class="empty-icon">📦</span>
+                    <span class="empty-icon">
+                        <i class="fa-solid fa-box-open"></i>
+                    </span>
                     <p>No orders found</p>
                 </div>
                 } @else {
@@ -332,11 +372,15 @@
                                 <span class="tracking-code">{{ order.trackingCode }}</span>
                                 <span class="text-muted order-date">{{ formatDate(order.createdAt) }}</span>
                                 <span class="text-muted">{{ order.items.length }} item(s)</span>
-                                <span class="text-muted">💳 {{ order.paymentMethod }}</span>
+                                <span class="text-muted">
+                                    <i class="fa-regular fa-credit-card"></i>
+                                    {{ order.paymentMethod }}
+                                </span>
                             </div>
                             <div class="order-row-right">
                                 <span class="text-gold order-total">${{ order.total.toFixed(2) }}</span>
                                 <span class="status-chip" [class]="statusClass(order.status)">{{ order.status }}</span>
+                                <span class="btn-view" (click)="viewOrderDetails(order.id)">view</span>
 
                                 <!-- Status Dropdown (admin) -->
                                 <div class="status-select-wrap" [class.is-updating]="updatingOrderId() === order.id"
@@ -378,7 +422,8 @@
                                 }
                             </div>
                             <div class="order-address">
-                                📍 {{ order.address.street }}, {{ order.address.city }}, {{ order.address.country }}
+                                <i class="fa-solid fa-location-dot"></i> {{ order.address.street }}, {{
+                                order.address.city }}, {{ order.address.country }}
                             </div>
                         </div>
                         }

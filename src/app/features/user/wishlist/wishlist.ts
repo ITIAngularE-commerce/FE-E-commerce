@@ -33,6 +33,8 @@ export class Wishlist {
     this.wishlistService.getWishlist().subscribe({
       next: (res) => {
         if (res.success) this.items.set(res.data ?? []);
+        console.log(res.data);
+
         this.isLoading.set(false);
       },
       error: () => {

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { OrderService } from '../../../core/services/order.service';
 import { Order, OrderStatus } from '../../../interfaces/order.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-order-list',
@@ -11,6 +12,7 @@ import { Order, OrderStatus } from '../../../interfaces/order.interface';
 })
 export class OrderListComponent {
   private orderService = inject(OrderService);
+  private router = inject(Router);
 
   orders = signal<Order[]>([]);
   isLoading = signal(true);
@@ -79,15 +81,15 @@ export class OrderListComponent {
 
   statusIcon(status: OrderStatus): string {
     const map: Record<string, string> = {
-      Pending: '🕐',
-      Processing: '⚙️',
-      Shipped: '🚚',
-      Delivered: '✅',
-      Cancelled: '✕',
+      Pending: 'fa-regular fa-clock',
+      Processing: 'fa-solid fa-gear',
+      Shipped: 'fa-solid fa-truck',
+      Delivered: 'fa-solid fa-circle-check',
+      Cancelled: 'fa-solid fa-circle-xmark',
     };
-    return map[status] ?? '🕐';
-  }
 
+    return map[status] ?? 'fa-regular fa-clock';
+  }
   formatDate(iso: string): string {
     if (!iso) return 'N/A';
     const normalized = iso.includes('Z') ? iso : iso + 'Z';
@@ -100,5 +102,9 @@ export class OrderListComponent {
   private showSuccess(msg: string): void {
     this.successMessage.set(msg);
     setTimeout(() => this.successMessage.set(null), 3000);
+  }
+
+  viewOrderDetails(orderId: number): void {
+    this.router.navigate(['/orders', orderId]);
   }
 }

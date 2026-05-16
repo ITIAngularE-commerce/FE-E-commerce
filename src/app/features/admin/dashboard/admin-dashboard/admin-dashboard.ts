@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Order, OrderStatus } from '../../../../interfaces/order.interface';
 import { AdminStats, AdminTab, AdminUser } from '../../../../interfaces/admin.interface';
 import { AdminService } from '../../../../core/services/admin.service';
@@ -14,8 +14,12 @@ import { AdminService } from '../../../../core/services/admin.service';
 })
 export class AdminDashboard {
   private adminService = inject(AdminService);
+  private router = inject(Router);
 
   activeTab = signal<AdminTab>('dashboard');
+
+  // ── Sidebar (mobile) ──
+  sidebarOpen = signal(false);
 
   // ── Stats ──
   stats = signal<AdminStats | null>(null);
@@ -28,14 +32,14 @@ export class AdminDashboard {
   togglingUserId = signal<string | null>(null);
   userSearch = signal('');
 
-  filteredUsers = computed(() => {
+  filteredUsers = () => {
     const q = this.userSearch().toLowerCase();
     return this.users().filter(
       (u) =>
         (!q || u.fullName.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)) &&
         (this.userRoleFilter() === 'All' || u.role === this.userRoleFilter())
     );
-  });
+  };
 
   // ── Orders ──
   orders = signal<Order[]>([]);
@@ -45,14 +49,14 @@ export class AdminDashboard {
   expandedOrderId = signal<number | null>(null);
   orderSearch = signal('');
 
-  filteredOrders = computed(() => {
+  filteredOrders = () => {
     const q = this.orderSearch().toLowerCase();
     return this.orders().filter(
       (o) =>
         (!q || o.trackingCode.toLowerCase().includes(q) || String(o.id).includes(q)) &&
         (this.orderStatusFilter() === 'All' || o.status === this.orderStatusFilter())
     );
-  });
+  };
 
   // ── Shared ──
   successMessage = signal<string | null>(null);
@@ -68,10 +72,25 @@ export class AdminDashboard {
     this.loadOrders();
   }
 
+  // Close sidebar when clicking outside on mobile
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.sidebarOpen.set(false);
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen.update((v) => !v);
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpen.set(false);
+  }
+
   setTab(tab: AdminTab): void {
     this.activeTab.set(tab);
     this.successMessage.set(null);
     this.error.set(null);
+    this.sidebarOpen.set(false); // close sidebar on mobile after tab change
   }
 
   // ── Stats ──
@@ -184,5 +203,9 @@ export class AdminDashboard {
   private showSuccess(msg: string): void {
     this.successMessage.set(msg);
     setTimeout(() => this.successMessage.set(null), 3500);
+  }
+
+  viewOrderDetails(orderId: number): void {
+    this.router.navigate(['/orders', orderId]);
   }
 }

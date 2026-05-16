@@ -40,12 +40,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/orders/order-list.component/order-list.component').then((m) => m.OrderListComponent),
       },
-      // {
-      //   path: 'orders/:id',
-      //   canActivate: [authGuard],
-      //   loadComponent: () =>
-      //     import('./features/orders/order-detail/order-detail').then((m) => m.OrderDetail),
-      // },
+      {
+        path: 'orders/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/orders/order-detail/order-detail').then((m) => m.OrderDetail),
+      },
       {
         path: 'wishlist',
         canActivate: [authGuard],
