@@ -14,16 +14,16 @@ export const routes: Routes = [
     component: MainLayout,
     children: [
       { path: '', component: Home },
-      // {
-      //   path: 'products',
-      //   loadComponent: () =>
-      //     import('./features/products/product-list/product-list').then((m) => m.ProductList),
-      // },
-      // {
-      //   path: 'products/:id',
-      //   loadComponent: () =>
-      //     import('./features/products/product-detail/product-detail').then((m) => m.ProductDetail),
-      // },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./features/products/product-list/product-list').then((m) => m.ProductList),
+      },
+      {
+        path: 'products/:id',
+        loadComponent: () =>
+          import('./features/products/product-detail/product-detail').then((m) => m.ProductDetail),
+      },
       {
         path: 'cart',
         canActivate: [authGuard],

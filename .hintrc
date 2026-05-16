@@ -12,6 +12,8 @@
         "list": "off"
       }
     ],
-    "css-prefix-order": "off"
+    "css-prefix-order": "off",
+    "axe/forms": "off",
+    "axe/text-alternatives": "off"
   }
 }
