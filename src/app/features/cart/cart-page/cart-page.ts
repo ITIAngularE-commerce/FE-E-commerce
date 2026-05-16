@@ -21,7 +21,9 @@ export class CartPage {
   isClearing = signal(false);
 
   itemCount = computed(() => this.cart()?.items?.length ?? 0);
-  subtotal = computed(() => this.cart()?.total ?? 0);
+  subtotal = computed(() =>
+    this.cart()?.items?.reduce((sum, i) => sum + i.subtotal, 0) ?? 0
+  );
   shipping = computed(() => (this.subtotal() >= 50 ? 0 : 5.99));
   total = computed(() => this.subtotal() + this.shipping());
   isEmpty = computed(() => this.itemCount() === 0);
@@ -37,6 +39,8 @@ export class CartPage {
       next: (res) => {
         if (res.success) this.cart.set(res.data);
         this.isLoading.set(false);
+        console.log(res.data);
+
       },
       error: () => {
         this.error.set('Failed to load cart. Please try again.');

@@ -48,7 +48,7 @@ export class Wishlist {
     this.removingId.set(productId);
     this.wishlistService.toggle(productId).subscribe({
       next: () => {
-        this.items.update((list) => list.filter((i) => i.productId !== productId));
+        this.items.update((list) => list.filter((i) => i.id !== productId));
         this.removingId.set(null);
         this.showSuccess('Item removed from wishlist.');
       },
@@ -60,10 +60,10 @@ export class Wishlist {
   }
 
   addToCart(item: WishlistItem): void {
-    this.addingToCartId.set(item.productId);
-    this.cartService.addItem(item.productId, 1).subscribe({
+    this.addingToCartId.set(item.id);
+    this.cartService.addItem(item.id, 1).subscribe({
       next: (res) => {
-        if (res.success) this.showSuccess(`"${item.productName}" added to cart!`);
+        if (res.success) this.showSuccess(`"${item.name}" added to cart!`);
         this.addingToCartId.set(null);
       },
       error: () => {

@@ -1,11 +1,16 @@
 export interface WishlistItem {
-    productId: number;
-    productName: string;
-    imageUrl: string;
+    id: number;
+    name: string;
+    description: string;
     price: number;
     stock: number;
+    imageUrls: string[];
+    categoryId: number;
     categoryName?: string;
     sellerName?: string;
+    averageRating: number;
+    reviewCount: number;
+    createdAt: string;
 }
 
 export interface ApiResponse<T> {

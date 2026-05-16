@@ -87,8 +87,8 @@
 
                 <!-- Product Image -->
                 <div class="item-image-wrap">
-                    @if (item.productImage) {
-                    <img [src]="item.productImage" [alt]="item.productName" class="item-image" />
+                    @if (item.imageUrl) {
+                    <img [src]="item.imageUrl" [alt]="item.productName" class="item-image" />
                     } @else {
                     <div class="item-image-placeholder">
                         <i class="fa-solid fa-box-open"></i>
@@ -100,7 +100,7 @@
                 <div class="item-info">
                     <h3 class="item-name">{{ item.productName }}</h3>
                     <p class="item-id">Product #{{ item.productId }}</p>
-                    <p class="item-unit-price">${{ item.price.toFixed(2) }} / unit</p>
+                    <p class="item-unit-price">${{ item.unitPrice.toFixed(2) }} / unit</p>
                 </div>
 
                 <!-- Quantity Controls -->

@@ -1,3 +1,4 @@
+import { CartService } from './../../core/services/cart.service';
 import { Component, signal, HostListener, inject, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -21,9 +22,13 @@ export class Navbar implements OnInit {
   isScrolled = signal(false);
   isMobileMenuOpen = signal(false);
   isUserMenuOpen = signal(false);
-  cartCount = signal(0);
+  // cartCount = signal(0);
   // wishlistCount = signal(0);
   categories = signal<Category[]>([]);
+
+  //cart
+  private CartService = inject(CartService);
+  cartCount = this.CartService.cartCount;
 
   //wishlist
   private wishlistService = inject(WishlistService);
@@ -33,6 +38,7 @@ export class Navbar implements OnInit {
       next: (res) => this.categories.set(res.data),
     });
     this.wishlistService.getCount().subscribe();
+    this.CartService.getCartCount().subscribe();
 
   }
 
