@@ -100,7 +100,10 @@ export class ProductDetail implements OnInit {
         this.loadRating(id);
         this.isSubmitting.set(false);
       },
-      error: () => this.isSubmitting.set(false),
+      error: (err) => {
+        this.notif.error('Cannot submit review', err?.error?.message || 'Something went wrong');
+        this.isSubmitting.set(false);
+      },
     });
   }
 

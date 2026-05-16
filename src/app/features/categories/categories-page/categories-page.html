@@ -1,0 +1,74 @@
+<div class="cats-page">
+
+  <!-- Background -->
+  <div class="page-bg">
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+    <svg class="bg-wave" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,150 C300,50 600,250 900,120 C1050,60 1150,160 1200,150"
+        fill="none" stroke="rgba(200,169,110,0.06)" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-badge">Browse</div>
+      <h1 class="page-title">All Categories</h1>
+      <p class="page-sub">Explore everything we have to offer</p>
+    </div>
+
+    <!-- Grid -->
+    @if (isLoading()) {
+      <div class="cats-grid">
+        @for (s of [1,2,3,4,5,6]; track s) {
+          <div class="cat-skeleton"></div>
+        }
+      </div>
+    } @else {
+      <div class="cats-grid">
+        @for (cat of categories(); track cat.id) {
+          <a [routerLink]="'/products'"
+            [queryParams]="{CategoryId: cat.id}"
+            class="cat-card"
+            [style.--color]="getStyle(cat.name).color">
+
+            <!-- Glow bg -->
+            <div class="card-glow"></div>
+
+            <!-- Content -->
+            <div class="card-content">
+              <div class="cat-text">
+                <h2 class="cat-name">{{ cat.name }}</h2>
+                <p class="cat-sub">
+                  {{ cat.subCategories?.length || 0 }} subcategories
+                </p>
+                <div class="cat-link-label">
+                  Shop now
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Icon -->
+              <div class="cat-icon-wrap">
+                <div class="cat-icon">
+                  <app-cat-icon [name]="getStyle(cat.name).iconKey"/>
+                </div>
+                <div class="icon-ring ring1"></div>
+                <div class="icon-ring ring2"></div>
+              </div>
+            </div>
+
+            <!-- Shimmer -->
+            <div class="card-shimmer"></div>
+          </a>
+        }
+      </div>
+    }
+
+  </div>
+</div>

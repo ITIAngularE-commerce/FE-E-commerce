@@ -31,7 +31,7 @@
 
         @if (authService.isLoggedIn()) {
 
-        <!-- Wishlist -->
+        <!-- wishlist -->
         <a routerLink="/wishlist" class="icon-btn" aria-label="Wishlist">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06
@@ -42,6 +42,7 @@
           <span class="badge">{{ wishlistCount() }}</span>
           }
         </a>
+
         <!-- Cart -->
         <a routerLink="/cart" class="icon-btn" aria-label="Cart">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -160,12 +161,12 @@
   <!-- Categories bar -->
   <div class="categories-bar">
     <div class="navbar-container">
-      @for (cat of categories; track cat.name) {
-      <a [routerLink]="cat.route" routerLinkActive="cat-active" class="cat-link">
+      @for (cat of categories(); track cat.id) {
+      <a [routerLink]="'/products'" [queryParams]="{CategoryId: cat.id}" routerLinkActive="cat-active" class="cat-link">
         {{ cat.name }}
       </a>
       }
-      <a routerLink="/products" class="cat-link cat-all">All Categories</a>
+      <a routerLink="/categories" class="cat-link cat-all">All Categories</a>
     </div>
   </div>
 
@@ -180,8 +181,8 @@
       </svg>
       <input type="text" placeholder="Search..." class="search-input" />
     </div>
-    @for (cat of categories; track cat.name) {
-    <a [routerLink]="cat.route" class="mobile-item">{{ cat.name }}</a>
+    @for (cat of categories(); track cat.name) {
+    <a [routerLink]="'/products'" [queryParams]="{CategoryId: cat.id}" class="mobile-item">{{ cat.name }}</a>
     }
     <div class="mobile-divider"></div>
     @if (authService.isLoggedIn()) {

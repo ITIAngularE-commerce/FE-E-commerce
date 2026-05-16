@@ -20,6 +20,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.content {
+  flex: 1;
+  width: 100%;
+  padding-top: 102px; /* 64px navbar + 38px categories bar */
+}
+
 app-root {
   display: block;
   width: 100%;
