@@ -5,6 +5,10 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Order, OrderStatus } from '../../../../interfaces/order.interface';
 import { AdminStats, AdminTab, AdminUser } from '../../../../interfaces/admin.interface';
 import { AdminService } from '../../../../core/services/admin.service';
+import { CategoryService } from '../../../../services/category.service';
+import { ProductService } from '../../../../services/product.service';
+import { Product } from '../../../../interfaces/product.interface';
+import { Category } from '../../../../interfaces/category.interface';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -15,8 +19,17 @@ import { AdminService } from '../../../../core/services/admin.service';
 export class AdminDashboard {
   private adminService = inject(AdminService);
   private router = inject(Router);
+  private productService = inject(ProductService);
+  private categoryService = inject(CategoryService);
+
 
   activeTab = signal<AdminTab>('dashboard');
+
+  products = signal<Product[]>([]);
+  categories = signal<Category[]>([]);
+
+  isLoadingProducts = signal(false);
+  isLoadingCategories = signal(false);
 
   // ── Sidebar (mobile) ──
   sidebarOpen = signal(false);
@@ -31,6 +44,9 @@ export class AdminDashboard {
   userRoleFilter = signal<string>('All');
   togglingUserId = signal<string | null>(null);
   userSearch = signal('');
+
+
+
 
   filteredUsers = () => {
     const q = this.userSearch().toLowerCase();
@@ -70,6 +86,9 @@ export class AdminDashboard {
     this.loadStats();
     this.loadUsers();
     this.loadOrders();
+
+    this.loadProducts();
+    this.loadCategories();
   }
 
   // Close sidebar when clicking outside on mobile
@@ -207,5 +226,80 @@ export class AdminDashboard {
 
   viewOrderDetails(orderId: number): void {
     this.router.navigate(['/orders', orderId]);
+  }
+
+
+  loadProducts(): void {
+    this.isLoadingProducts.set(true);
+
+    this.productService.getAll().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.products.set(res.data.items ?? []);
+        }
+
+        this.isLoadingProducts.set(false);
+      },
+      error: () => {
+        this.isLoadingProducts.set(false);
+      }
+    });
+  }
+
+
+  loadCategories(): void {
+    this.isLoadingCategories.set(true);
+
+    this.categoryService.getAll().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.categories.set(res.data ?? []);
+        }
+
+        this.isLoadingCategories.set(false);
+      },
+      error: () => {
+        this.isLoadingCategories.set(false);
+      }
+    });
+  }
+  deleteProduct(id: number): void {
+    if (!confirm('Delete this product?')) return;
+
+    this.productService.delete(id).subscribe({
+      next: (res) => {
+        if (res.success) {
+
+          this.products.update(products =>
+            products.filter(p => p.id !== id)
+          );
+
+          this.showSuccess('Product deleted successfully');
+        }
+      },
+      error: () => {
+        this.error.set('Failed to delete product');
+      }
+    });
+  }
+
+  deleteCategory(id: number): void {
+    if (!confirm('Delete this category?')) return;
+
+    this.categoryService.delete(id).subscribe({
+      next: (res) => {
+        if (res.success) {
+
+          this.categories.update(categories =>
+            categories.filter(c => c.id !== id)
+          );
+
+          this.showSuccess('Category deleted successfully');
+        }
+      },
+      error: () => {
+        this.error.set('Failed to delete category');
+      }
+    });
   }
 }

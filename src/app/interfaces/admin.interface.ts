@@ -14,4 +14,5 @@ export interface AdminStats {
     totalProducts: number;
     totalRevenue: number;
 }
-export type AdminTab = 'dashboard' | 'users' | 'orders';
+// export type AdminTab = 'dashboard' | 'users' | 'orders';
+export type AdminTab = 'dashboard' | 'users' | 'products' | 'categories' | 'orders';

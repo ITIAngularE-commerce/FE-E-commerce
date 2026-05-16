@@ -47,6 +47,24 @@
                 <span class="nav-count">{{ orders().length }}</span>
                 }
             </button>
+
+            <button class="nav-item" [class.nav-active]="activeTab() === 'products'" (click)="setTab('products')">
+
+                <span class="nav-icon">
+                    <i class="fa-solid fa-box"></i>
+                </span>
+
+                <span class="nav-label">Products</span>
+            </button>
+
+            <button class="nav-item" [class.nav-active]="activeTab() === 'categories'" (click)="setTab('categories')">
+
+                <span class="nav-icon">
+                    <i class="fa-solid fa-layer-group"></i>
+                </span>
+
+                <span class="nav-label">Categories</span>
+            </button>
         </nav>
 
         <div class="sidebar-footer">
@@ -435,6 +453,173 @@
             </div>
 
         </div>
+        }
+
+
+        <!-- ══════════════════════════════════════
+         TAB: PRODUCTS
+    ══════════════════════════════════════ -->
+        @if (activeTab() === 'products') {
+
+        <div class="tab-view animate-in">
+
+            <div class="page-header">
+                <h1 class="page-title">Product Management</h1>
+                <span class="page-sub">
+                    {{ products().length }} products
+                </span>
+            </div>
+
+            <div class="section-card">
+
+                <div class="table-wrap">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @for (product of products(); track product.id) {
+
+                            <tr>
+
+                                <td>
+                                    <div class="user-cell">
+
+                                        <img [src]="product.imageUrls[0]" class="order-item-img" alt="product" />
+
+                                        <span class="user-name">
+                                            {{ product.name }}
+                                        </span>
+
+                                    </div>
+                                </td>
+
+                                <td>{{ product.categoryName }}</td>
+
+                                <td class="text-gold">
+                                    ${{ product.price }}
+                                </td>
+
+                                <td>{{ product.stock }}</td>
+
+                                <td>
+                                    ⭐ {{ product.averageRating }}
+                                </td>
+
+                                <td>
+
+                                    <button class="btn-view" [routerLink]="['/admin/products/edit', product.id]">
+
+                                        Edit
+
+                                    </button>
+
+                                    <button class="btn-toggle btn-toggle--danger" (click)="deleteProduct(product.id)">
+
+                                        Delete
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        }
+
+
+
+        <!-- ══════════════════════════════════════
+         TAB: CATEGORIES
+    ══════════════════════════════════════ -->
+
+        @if (activeTab() === 'categories') {
+
+        <div class="tab-view animate-in">
+
+            <div class="page-header">
+                <h1 class="page-title">Category Management</h1>
+            </div>
+
+            <div class="section-card">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Image</th>
+                            <th>Sub Categories</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @for (category of categories(); track category.id) {
+
+                        <tr>
+
+                            <td>{{ category.name }}</td>
+
+                            <td>
+
+                                @if (category.imageUrl) {
+                                <img [src]="category.imageUrl" class="order-item-img" />
+                                }
+
+                            </td>
+
+                            <td>{{ category.subCategories.length }}</td>
+
+                            <td>
+
+                                <button class="btn-view">
+                                    Edit
+                                </button>
+
+                                <button class="btn-toggle btn-toggle--danger" (click)="deleteCategory(category.id)">
+
+                                    Delete
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
         }
 
     </main>
