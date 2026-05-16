@@ -5,6 +5,8 @@ import { Home } from './features/home/home';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { SellerLayout } from './layout/seller-layout/seller-layout';
+
 
 export const routes: Routes = [
   {
@@ -69,6 +71,31 @@ export const routes: Routes = [
       //     import('./features/admin/dashboard/admin-dashboard').then((m) => m.AdminDashboard),
       // },
     ],
+  },
+  {
+    path: 'seller',
+    component: SellerLayout,
+    canActivate: [authGuard, roleGuard(['Seller'])],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/seller/dashboard/dashboard')
+          .then(m => m.Dashboard)
+      },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./features/seller/products/products')
+          .then(m => m.Products)
+      },
+      // {
+      //   path: 'settings',
+      //   loadComponent: () =>
+      //     import('./features/seller/settings/seller-settings')
+      //     .then(m => m.SellerSettings)
+      // },
+    ]
   },
   {
     path: 'auth',
