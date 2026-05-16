@@ -22,6 +22,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/products/product-detail/product-detail').then((m) => m.ProductDetail),
       },
+      {
+        path: 'categories',
+        loadComponent: () =>
+          import('./features/categories/categories-page/categories-page').then(
+            (m) => m.CategoriesPage,
+          ),
+      },
       // {
       //   path: 'cart',
       //   canActivate: [authGuard],
