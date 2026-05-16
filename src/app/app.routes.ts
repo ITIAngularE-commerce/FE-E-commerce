@@ -37,6 +37,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/cart/cart-page/cart-page').then((m) => m.CartPage),
       },
       {
+        path: 'checkout',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/cart/checkout-page/checkout-page').then(m => m.CheckoutPage)
+      },
+      {
         path: 'orders',
         canActivate: [authGuard],
         loadComponent: () =>
@@ -81,13 +86,13 @@ export const routes: Routes = [
         path: '',
         loadComponent: () =>
           import('./features/seller/dashboard/dashboard')
-          .then(m => m.Dashboard)
+            .then(m => m.Dashboard)
       },
       {
         path: 'products',
         loadComponent: () =>
           import('./features/seller/products/products')
-          .then(m => m.Products)
+            .then(m => m.Products)
       },
       // {
       //   path: 'settings',

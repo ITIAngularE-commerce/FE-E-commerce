@@ -9,7 +9,7 @@ type ActiveTab = 'info' | 'addresses' | 'security' | 'orders';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, ReactiveFormsModule, OrderListComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })

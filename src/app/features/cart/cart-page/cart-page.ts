@@ -1,11 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CartService } from '../../../core/services/cart.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Cart, CartItem } from '../../../interfaces/cart.interface';
 
 @Component({
   selector: 'app-cart-page',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './cart-page.html',
   styleUrl: './cart-page.css',
 })
