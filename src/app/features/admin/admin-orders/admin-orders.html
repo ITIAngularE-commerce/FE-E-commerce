@@ -1,0 +1,99 @@
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">Order Management</h1>
+    <p class="page-sub">{{ filteredOrders().length }} of {{ orders().length }} orders</p>
+  </div>
+
+  @if (successMessage()) { <div class="toast toast-success">✓ {{ successMessage() }}</div> }
+  @if (error()) { <div class="toast toast-error">✕ {{ error() }}</div> }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="search-input" type="text" placeholder="Search by tracking code…"
+        [value]="search()" (input)="search.set($any($event.target).value)"/>
+    </div>
+    <div class="chips">
+      @for (s of statusOptions; track s) {
+        <button class="chip" [class.chip-active]="statusFilter() === s" (click)="statusFilter.set(s)">{{ s }}</button>
+      }
+    </div>
+  </div>
+
+  <div class="section-card">
+    @if (isLoading()) {
+      <div class="skeleton-rows">@for (i of [1,2,3,4]; track i) { <div class="skeleton-row"></div> }</div>
+    } @else if (filteredOrders().length === 0) {
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M21 10H3M16 2v4M8 2v4M3 6h18v16H3z"/>
+        </svg>
+        <p>No orders found</p>
+      </div>
+    } @else {
+      <div class="orders-list">
+        @for (order of filteredOrders(); track order.id) {
+          <div class="order-card" [class.order-card--expanded]="expandedId() === order.id">
+
+            <div class="order-head" (click)="toggleExpand(order.id)">
+              <div class="order-head-left">
+                <span class="tracking-code">{{ order.trackingCode }}</span>
+                <span class="text-muted">{{ formatDate(order.createdAt) }}</span>
+                <span class="text-muted">{{ order.items.length }} item(s)</span>
+                <span class="text-muted pay-method">💳 {{ order.paymentMethod }}</span>
+              </div>
+              <div class="order-head-right">
+                <span class="order-total">${{ order.total.toFixed(2) }}</span>
+                <span class="status-chip" [ngClass]="statusClass(order.status)">{{ order.status }}</span>
+
+                <div class="status-select-wrap" (click)="$event.stopPropagation()">
+                  <select class="status-select"
+                    [value]="order.status"
+                    [disabled]="updatingId() === order.id"
+                    (change)="changeStatus(order.id, $any($event.target).value)">
+                    @for (s of orderStatusOptions; track s) {
+                      <option [value]="s">{{ s }}</option>
+                    }
+                  </select>
+                  @if (updatingId() === order.id) { <span class="spinner"></span> }
+                </div>
+
+                <span class="caret" [class.caret--open]="expandedId() === order.id">›</span>
+              </div>
+            </div>
+
+            @if (expandedId() === order.id) {
+              <div class="order-body">
+                <div class="order-items-grid">
+                  @for (item of order.items; track item.productId) {
+                    <div class="order-item-card">
+                      @if (item.imageUrl) {
+                        <img [src]="item.imageUrl" [alt]="item.productName" class="item-img"/>
+                      } @else {
+                        <div class="item-img item-placeholder">📦</div>
+                      }
+                      <div class="item-info">
+                        <p class="item-name">{{ item.productName }}</p>
+                        <p class="text-muted">{{ item.quantity }} × ${{ item.unitPrice.toFixed(2) }}</p>
+                      </div>
+                      <span class="item-sub">${{ item.subtotal.toFixed(2) }}</span>
+                    </div>
+                  }
+                </div>
+                <div class="order-address">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  {{ order.address.street }}, {{ order.address.city }}, {{ order.address.country }}
+                </div>
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

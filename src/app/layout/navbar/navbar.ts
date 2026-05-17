@@ -34,7 +34,7 @@ export class Navbar implements OnInit {
   private wishlistService = inject(WishlistService);
   wishlistCount = this.wishlistService.wishlistCount;
 
-  maxCatsVisible = 5;
+  maxCatsVisible = 7;
 
   visibleCats = computed(() => this.categories().slice(0, this.maxCatsVisible));
   hasMore = computed(() => this.categories().length > this.maxCatsVisible);

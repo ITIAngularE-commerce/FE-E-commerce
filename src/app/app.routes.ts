@@ -247,25 +247,25 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
       },
-      // {
-      //   path: 'users',
-      //   loadComponent: () => import('./features/admin/users/admin-users').then((m) => m.AdminUsers),
-      // },
-      // {
-      //   path: 'orders',
-      //   loadComponent: () =>
-      //     import('./features/admin/orders/admin-orders').then((m) => m.AdminOrders),
-      // },
-      // {
-      //   path: 'products',
-      //   loadComponent: () =>
-      //     import('./features/admin/products/admin-products').then((m) => m.AdminProducts),
-      // },
-      // {
-      //   path: 'categories',
-      //   loadComponent: () =>
-      //     import('./features/admin/categories/admin-categories').then((m) => m.AdminCategories),
-      // },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/admin-users/admin-users').then((m) => m.AdminUsers),
+      },
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import('./features/admin/admin-orders/admin-orders').then((m) => m.AdminOrders),
+      },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./features/admin/admin-products/admin-products').then((m) => m.AdminProducts),
+      },
+      {
+        path: 'categories',
+        loadComponent: () =>
+          import('./features/admin/admin-categories/admin-categories').then((m) => m.AdminCategories),
+      },
     ],
   },
 
