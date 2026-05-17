@@ -7,6 +7,7 @@ import { CartService } from '../../../core/services/cart.service';
 import { OrderService } from '../../../core/services/order.service';
 import { PaymentService } from '../../../core/services/payment.service';
 import { AddressService, Address, CreateAddressDto } from '../../../core/services/address.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { CreateOrderRequest } from '../../../interfaces/order.interface';
 
 @Component({
@@ -21,6 +22,7 @@ export class CheckoutComponent implements OnInit {
     private orderService = inject(OrderService);
     private paymentService = inject(PaymentService);
     private addressService = inject(AddressService);
+    private notif = inject(NotificationService);
     private router = inject(Router);
     private fb = inject(FormBuilder);
 
@@ -63,22 +65,19 @@ export class CheckoutComponent implements OnInit {
             next: (res) => {
                 if (res.success && res.data) {
                     this.cart.set(res.data);
-                    console.log(res.data);
                     const items = res.data.items ?? [];
                     const sub = items.reduce((sum: number, i: any) => sum + i.subtotal, 0);
-                    // ✅ quantity الكلية مش عدد الـ products
                     this.itemCount.set(items.reduce((sum: number, i: any) => sum + i.quantity, 0));
                     this.subtotal.set(sub);
                     this.shipping.set(sub >= 50 ? 0 : 5.99);
                     this.total.set(sub + this.shipping());
                 } else {
-                    // ✅ لو مفيش data، set cart لـ empty object عشان الـ template يشتغل صح
                     this.cart.set({ items: [] });
                 }
                 this.isLoading.set(false);
             },
             error: () => {
-                this.error.set('Failed to load cart');
+                this.notif.error('Error', 'Failed to load cart');
                 this.cart.set({ items: [] });
                 this.isLoading.set(false);
             }
@@ -124,11 +123,11 @@ export class CheckoutComponent implements OnInit {
                     this.selectedAddressId.set(res.data!.id);
                     this.showAddressForm.set(false);
                     this.addressForm.reset({ country: 'Egypt', isDefault: false });
+                    this.notif.success('Address Added', 'Your new address has been saved.');
                 }
             },
             error: (err) => {
-                this.error.set(err.error?.message || 'Failed to add address');
-                setTimeout(() => this.error.set(null), 3000);
+                this.notif.error('Error', err.error?.message || 'Failed to add address');
             }
         });
     }
@@ -138,16 +137,13 @@ export class CheckoutComponent implements OnInit {
     }
 
     placeOrder(): void {
-        // ✅ التحقق من الـ address قبل أي حاجة
         if (!this.selectedAddressId()) {
-            this.error.set('Please select a shipping address');
-            setTimeout(() => this.error.set(null), 3000);
+            this.notif.warning('No Address', 'Please select a shipping address');
             return;
         }
 
         if (this.itemCount() === 0) {
-            this.error.set('Your cart is empty');
-            setTimeout(() => this.error.set(null), 3000);
+            this.notif.warning('Empty Cart', 'Your cart is empty');
             return;
         }
 
@@ -171,26 +167,29 @@ export class CheckoutComponent implements OnInit {
                                     window.open(paymentRes.data.iframeUrl, '_blank');
                                     this.router.navigate(['/order-confirmation', order.id]);
                                 } else {
-                                    this.error.set(paymentRes.message || 'Payment initiation failed');
+                                    this.notif.error('Payment Failed', paymentRes.message || 'Payment initiation failed');
                                     this.isProcessing.set(false);
                                 }
                             },
                             error: (err) => {
-                                this.error.set(err.error?.message || 'Failed to initiate payment');
+                                this.notif.error('Payment Failed', err.error?.message || 'Failed to initiate payment');
                                 this.isProcessing.set(false);
                             }
                         });
                     } else {
-                        // CashOnDelivery — navigate directly
-                        this.router.navigate(['/order-confirmation', order.id]);
+                        // ✅ Cash on Delivery
+                        this.notif.success('Order Placed!', 'Your order has been placed successfully.');
+                        setTimeout(() => {
+                            this.router.navigate(['/order-confirmation', order.id]);
+                        }, 1500);
                     }
                 } else {
-                    this.error.set(res.message || 'Failed to create order');
+                    this.notif.error('Order Failed', res.message || 'Failed to create order');
                     this.isProcessing.set(false);
                 }
             },
             error: (err) => {
-                this.error.set(err.error?.message || 'Failed to create order');
+                this.notif.error('Order Failed', err.error?.message || 'Failed to create order');
                 this.isProcessing.set(false);
             }
         });
