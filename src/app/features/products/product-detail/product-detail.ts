@@ -40,9 +40,15 @@ export class ProductDetail implements OnInit {
   quantity = signal(1);
   isSubmitting = signal(false);
   addingToCartId = signal<number | null>(null);
+  editingReviewId = signal<number | null>(null);
 
   newReview: CreateReviewRequest = { rating: 5, comment: '' };
   hoveredStar = 0;
+
+  editReviewData = {
+    comment: '',
+    rating: 5,
+  };
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -107,6 +113,49 @@ export class ProductDetail implements OnInit {
         this.isSubmitting.set(false);
       },
     });
+  }
+
+  startEdit(review: Review) {
+    this.editingReviewId.set(review.id);
+
+    this.editReviewData = {
+      comment: review.comment,
+      rating: review.rating,
+    };
+  }
+
+  saveReview(reviewId: number) {
+    if (
+      !this.editReviewData.comment.trim() ||
+      this.editReviewData.rating < 1 ||
+      this.editReviewData.rating > 5
+    ) {
+      this.notif.error('Invalid data', 'Please enter valid review data');
+      return;
+    }
+
+    this.reviewService
+      .update(reviewId, {
+        comment: this.editReviewData.comment,
+        rating: this.editReviewData.rating,
+      })
+      .subscribe({
+        next: () => {
+          this.notif.success('Review updated!', 'Your review has been updated');
+
+          this.editingReviewId.set(null);
+
+          this.loadReviews(this.product()!.id);
+          this.loadRating(this.product()!.id);
+        },
+        error: (err) => {
+          this.notif.error('Cannot update review', err?.error?.message || 'Something went wrong');
+        },
+      });
+  }
+
+  cancelEdit() {
+    this.editingReviewId.set(null);
   }
 
   deleteReview(reviewId: number) {
