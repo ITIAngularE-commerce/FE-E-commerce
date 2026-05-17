@@ -534,7 +534,23 @@
   transition: opacity 0.2s;
 }
 
+.update-review {
+  background: transparent;
+  border: none;
+  color: #d4b87a;
+  font-size: 0.78rem;
+  cursor: pointer;
+  width: fit-content;
+  padding: 0;
+  transition: opacity 0.2s;
+  margin-right: 12px;
+}
+
 .delete-review:hover {
+  opacity: 0.7;
+}
+
+.update-review:hover {
   opacity: 0.7;
 }
 

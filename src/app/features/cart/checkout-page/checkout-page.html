@@ -1,1 +1,189 @@
-<p>checkout-page works!</p>
+<!-- src/app/features/checkout/checkout.component.html -->
+<div class="checkout-container">
+    <div class="checkout-header">
+        <h1>
+            <i class="fa-regular fa-clipboard"></i>
+            Checkout
+        </h1>
+        <button class="back-btn" (click)="goBackToCart()">← Back to Cart</button>
+    </div>
+
+    @if (isLoading()) {
+        <div class="loading">Loading...</div>
+    }
+
+    @if (!isLoading() && cart()?.items?.length === 0) {
+        <div class="empty-cart">
+            <p>Your cart is empty</p>
+            <button routerLink="/">Continue Shopping</button>
+        </div>
+    }
+
+    @if (!isLoading() && cart()?.items && cart()!.items.length > 0) {
+        <div class="checkout-content">
+            <!-- Left Column -->
+            <div class="checkout-left">
+                <!-- Section 1: Shipping Address -->
+                <div class="section">
+                    <h2>1. Shipping Address</h2>
+                    
+                    @if (addresses().length > 0) {
+                        <div class="address-list">
+                            @for (addr of addresses(); track addr.id) {
+                                <div class="address-item" 
+                                    [class.selected]="selectedAddressId() === addr.id"
+                                    (click)="selectAddress(addr.id)">
+                                    <div class="radio">
+                                        <div class="radio-dot" [class.active]="selectedAddressId() === addr.id"></div>
+                                    </div>
+                                    <div class="address-details">
+                                        <p>{{ addr.street }}</p>
+                                        <p>{{ addr.city }}, {{ addr.country }}</p>
+                                        @if (addr.isDefault) {
+                                            <span class="default-badge">Default</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <p class="no-address">No saved addresses. Add one below.</p>
+                    }
+
+                    <button class="add-address-btn" (click)="showAddressForm.set(!showAddressForm())">
+                        {{ showAddressForm() ? 'Cancel' : '+ Add New Address' }}
+                    </button>
+
+                    @if (showAddressForm()) {
+                        <form [formGroup]="addressForm" (ngSubmit)="addAddress()" class="address-form">
+                            <input type="text" formControlName="street" placeholder="Street Address">
+                            <div class="form-row">
+                                <input type="text" formControlName="city" placeholder="City">
+                                <input type="text" formControlName="state" placeholder="State">
+                            </div>
+                            <div class="form-row">
+                                <input type="text" formControlName="country" placeholder="Country">
+                                <input type="text" formControlName="zipCode" placeholder="Zip Code">
+                            </div>
+                            <label class="checkbox-label">
+                                <input type="checkbox" formControlName="isDefault">
+                                Set as default
+                            </label>
+                            <button type="submit" [disabled]="addressForm.invalid">Save Address</button>
+                        </form>
+                    }
+                </div>
+
+                <!-- Section 2: Payment Method -->
+                <div class="section">
+                    <h2>2. Payment Method</h2>
+                    
+                    <div class="payment-options">
+                        <div class="payment-option" 
+                            [class.selected]="selectedPaymentMethod() === 'CreditCard'"
+                            (click)="selectPaymentMethod('CreditCard')">
+                            <div class="radio">
+                                <div class="radio-dot" [class.active]="selectedPaymentMethod() === 'CreditCard'"></div>
+                            </div>
+                            <div class="payment-info">
+                                <i class="fa-regular fa-credit-card"></i>
+                                <span>Credit Card</span>
+                                <small>Pay with Paymob secure gateway</small>
+                            </div>
+                        </div>
+
+                        <div class="payment-option" 
+                            [class.selected]="selectedPaymentMethod() === 'CashOnDelivery'"
+                            (click)="selectPaymentMethod('CashOnDelivery')">
+                            <div class="radio">
+                                <div class="radio-dot" [class.active]="selectedPaymentMethod() === 'CashOnDelivery'"></div>
+                            </div>
+                            <div class="payment-info">
+                                <i class="fa-regular fa-money-bill-1"></i>
+                                <span>Cash on Delivery</span>
+                                <small>Pay when you receive the order</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (selectedPaymentMethod() === 'CreditCard') {
+                        <div class="payment-note">
+                            <i class="fa-solid fa-shield-heart"></i>
+                            <span>You will be redirected to Paymob secure payment gateway.</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Right Column: Order Summary -->
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                
+                <div class="summary-items">
+                    @for (item of cart()!.items; track item.id) {
+                        <div class="summary-item">
+                            <span>{{ item.quantity }}x {{ item.productName }}</span>
+                            <span>${{ item.subtotal.toFixed(2) }}</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="summary-row">
+                    <span>Subtotal ({{ itemCount() }} items)</span>
+                    <span>${{ subtotal().toFixed(2) }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    @if (shipping() === 0) {
+                        <span class="free">FREE</span>
+                    } @else {
+                        <span>${{ shipping().toFixed(2) }}</span>
+                    }
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>${{ total().toFixed(2) }}</span>
+                </div>
+
+                @if (subtotal() < 50) {
+                    <div class="shipping-progress">
+                        <p>Add <strong>${{ (50 - subtotal()).toFixed(2) }}</strong> more for free shipping</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" [style.width.%]="(subtotal() / 50) * 100"></div>
+                        </div>
+                    </div>
+                }
+
+                @if (error()) {
+                    <div class="error-msg">{{ error() }}</div>
+                }
+
+                <button class="place-order-btn" 
+                    (click)="placeOrder()" 
+                    [disabled]="isProcessing() || addresses().length === 0">
+                    @if (isProcessing()) {
+                        <span class="spinner"></span> Processing...
+                    } @else {
+                        <span>Place Order</span>
+                    }
+                </button>
+
+        <div class="trust-badges">
+            <div class="badge-item">
+                <i class="fa-solid fa-lock"></i>
+                <span>Secure checkout</span>
+            </div>
+            <div class="badge-item">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Easy returns</span>
+            </div>
+            <div class="badge-item">
+                <i class="fa-solid fa-truck"></i>
+                <span>Fast delivery</span>
+            </div>
+        </div>
+            </div>
+        </div>
+    }
+</div>

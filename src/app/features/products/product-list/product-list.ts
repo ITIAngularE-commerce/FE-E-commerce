@@ -26,7 +26,7 @@ export class ProductList implements OnInit {
 
   filters: ProductFilters = {
     page: 1,
-    pageSize: 12,
+    pageSize: 9,
     search: '',
     categoryId: undefined,
     minPrice: undefined,
@@ -87,7 +87,7 @@ export class ProductList implements OnInit {
   }
 
   resetFilters() {
-    this.filters = { page: 1, pageSize: 12, search: '', sortBy: 'createdAt', ascending: false };
+    this.filters = { page: 1, pageSize: 9, search: '', sortBy: 'createdAt', ascending: false };
     this.loadProducts();
   }
 
