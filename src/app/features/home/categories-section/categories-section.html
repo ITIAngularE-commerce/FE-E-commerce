@@ -15,19 +15,19 @@
 
     <!-- Grid -->
     <div class="cats-grid">
-      @for (cat of categories; track cat.name) {
-        <a [routerLink]="cat.route" class="cat-card"
-          [style.--color]="cat.color">
+      @for (cat of categories(); track cat.id) {
+        <a routerLink="/products"
+          [queryParams]="{CategoryId: cat.id}"
+          class="cat-card"
+          [style.--color]="getColor(cat.name)">
           <div class="cat-icon-wrap">
-            <!-- <div class="cat-icon" [innerHTML]="cat.icon"></div> -->
-             <div class="cat-icon">
-                <app-cat-icon [name]="cat.iconKey" />
+            <div class="cat-icon">
+              <app-cat-icon [name]="getIconKey(cat.name)"/>
             </div>
             <div class="cat-icon-glow"></div>
           </div>
           <div class="cat-info">
             <span class="cat-name">{{ cat.name }}</span>
-            <span class="cat-count">{{ cat.count }}</span>
           </div>
           <div class="cat-arrow">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"

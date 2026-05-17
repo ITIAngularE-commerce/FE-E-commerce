@@ -9,6 +9,8 @@ import { Product } from '../../../interfaces/product.interface';
 import { Review, ProductRating, CreateReviewRequest } from '../../../interfaces/review.interface';
 import { DatePipe, UpperCasePipe } from '@angular/common';
 import { WishlistService } from '../../../core/services/wishlist.service';
+import { WishlistItem } from '../../../interfaces/wishlist.interface';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -23,7 +25,7 @@ export class ProductDetail implements OnInit {
   private reviewService = inject(ReviewService);
   authService = inject(AuthService);
   private notif = inject(NotificationService);
-
+  private cartService = inject(CartService);
 
   //wishlist
   private wishlistService = inject(WishlistService);
@@ -37,16 +39,22 @@ export class ProductDetail implements OnInit {
   activeImg = signal(0);
   quantity = signal(1);
   isSubmitting = signal(false);
+  addingToCartId = signal<number | null>(null);
+  editingReviewId = signal<number | null>(null);
 
   newReview: CreateReviewRequest = { rating: 5, comment: '' };
   hoveredStar = 0;
+
+  editReviewData = {
+    comment: '',
+    rating: 5,
+  };
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadProduct(id);
     this.loadReviews(id);
     this.loadRating(id);
-
 
     // Check if product is in wishlist
     this.wishlistService.check(id).subscribe({
@@ -107,6 +115,49 @@ export class ProductDetail implements OnInit {
     });
   }
 
+  startEdit(review: Review) {
+    this.editingReviewId.set(review.id);
+
+    this.editReviewData = {
+      comment: review.comment,
+      rating: review.rating,
+    };
+  }
+
+  saveReview(reviewId: number) {
+    if (
+      !this.editReviewData.comment.trim() ||
+      this.editReviewData.rating < 1 ||
+      this.editReviewData.rating > 5
+    ) {
+      this.notif.error('Invalid data', 'Please enter valid review data');
+      return;
+    }
+
+    this.reviewService
+      .update(reviewId, {
+        comment: this.editReviewData.comment,
+        rating: this.editReviewData.rating,
+      })
+      .subscribe({
+        next: () => {
+          this.notif.success('Review updated!', 'Your review has been updated');
+
+          this.editingReviewId.set(null);
+
+          this.loadReviews(this.product()!.id);
+          this.loadRating(this.product()!.id);
+        },
+        error: (err) => {
+          this.notif.error('Cannot update review', err?.error?.message || 'Something went wrong');
+        },
+      });
+  }
+
+  cancelEdit() {
+    this.editingReviewId.set(null);
+  }
+
   deleteReview(reviewId: number) {
     this.reviewService.delete(reviewId).subscribe({
       next: () => {
@@ -139,4 +190,19 @@ export class ProductDetail implements OnInit {
     });
   }
 
+  addToCart() {
+    const product = this.product();
+    if (!product) return;
+    this.addingToCartId.set(product.id);
+    this.cartService.addItem(product.id, this.quantity()).subscribe({
+      next: () => {
+        this.notif.success('Added!', `${product.name} added to cart`);
+        this.addingToCartId.set(null);
+      },
+      error: (err) => {
+        this.notif.error('Failed', err?.error?.message || 'Something went wrong');
+        this.addingToCartId.set(null);
+      },
+    });
+  }
 }

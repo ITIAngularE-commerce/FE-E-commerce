@@ -1,0 +1,192 @@
+/* ── Page ── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fade-up 0.25s ease;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-header { margin-bottom: 4px; }
+.page-title  { font-size: 1.5rem; font-weight: 800; color: #f5f0e8; letter-spacing: -0.02em; margin: 0 0 4px; }
+.page-sub    { font-size: 0.82rem; color: rgba(245,240,232,0.35); margin: 0; }
+
+/* ── Stats ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .stats-grid { grid-template-columns: 1fr; } }
+
+.stat-card {
+  background: rgba(26,46,69,0.5);
+  border: 1px solid rgba(200,169,110,0.1);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.25s;
+}
+
+.stat-card:hover {
+  border-color: rgba(200,169,110,0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.stat-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon.gold   { background: rgba(200,169,110,0.12); border: 1px solid rgba(200,169,110,0.2);  color: #c8a96e; }
+.stat-icon.blue   { background: rgba(79,156,249,0.12);  border: 1px solid rgba(79,156,249,0.2);   color: #4f9cf9; }
+.stat-icon.green  { background: rgba(52,211,153,0.12);  border: 1px solid rgba(52,211,153,0.2);   color: #34d399; }
+.stat-icon.purple { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.2);  color: #a78bfa; }
+
+.stat-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(245,240,232,0.4); margin: 0 0 6px; }
+.stat-value { font-size: 1.6rem; font-weight: 800; color: #f5f0e8; margin: 0; letter-spacing: -0.02em; }
+
+/* ── Section Card ── */
+.section-card {
+  background: rgba(26,46,69,0.45);
+  border: 1px solid rgba(200,169,110,0.1);
+  border-radius: 20px;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-title { font-size: 0.95rem; font-weight: 700; color: #f5f0e8; margin: 0; }
+
+.btn-ghost {
+  background: transparent;
+  color: rgba(245,240,232,0.4);
+  border: 1px solid rgba(245,240,232,0.1);
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-ghost:hover { color: #f5f0e8; border-color: rgba(245,240,232,0.2); }
+
+/* ── Table ── */
+.table-wrap { overflow-x: auto; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  min-width: 480px;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(245,240,232,0.3);
+  border-bottom: 1px solid rgba(245,240,232,0.06);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(245,240,232,0.04);
+  color: #f5f0e8;
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.text-muted { color: rgba(245,240,232,0.35) !important; }
+.text-gold  { color: #c8a96e !important; font-weight: 700; }
+
+/* ── User Cell ── */
+.user-cell { display: flex; align-items: center; gap: 10px; }
+
+.user-avatar {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: rgba(200,169,110,0.1);
+  border: 1px solid rgba(200,169,110,0.2);
+  color: #c8a96e;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Chips ── */
+.role-chip {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.role-admin    { background: rgba(200,169,110,0.12); color: #c8a96e;  border: 1px solid rgba(200,169,110,0.25); }
+.role-seller   { background: rgba(79,156,249,0.12);  color: #4f9cf9;  border: 1px solid rgba(79,156,249,0.25);  }
+.role-customer { background: rgba(52,211,153,0.1);   color: #34d399;  border: 1px solid rgba(52,211,153,0.2);   }
+
+.status-dot       { font-size: 0.78rem; color: rgba(245,240,232,0.35); font-weight: 500; }
+.status-dot.active { color: #34d399; }
+
+.status-chip { font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.status-pending    { background: rgba(251,191,36,0.12);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.25);  }
+.status-processing { background: rgba(79,156,249,0.12);  color: #4f9cf9; border: 1px solid rgba(79,156,249,0.25);  }
+.status-shipped    { background: rgba(200,169,110,0.12); color: #c8a96e; border: 1px solid rgba(200,169,110,0.25); }
+.status-delivered  { background: rgba(52,211,153,0.1);   color: #34d399; border: 1px solid rgba(52,211,153,0.2);   }
+.status-cancelled  { background: rgba(248,113,113,0.1);  color: #f87171; border: 1px solid rgba(248,113,113,0.2);  }
+
+.tracking-code { font-family: monospace; font-size: 0.78rem; color: #c8a96e; font-weight: 700; letter-spacing: 0.04em; }
+
+/* ── Skeleton ── */
+.skeleton-card {
+  height: 88px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, rgba(245,240,232,0.03) 25%, rgba(245,240,232,0.07) 50%, rgba(245,240,232,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-rows { display: flex; flex-direction: column; gap: 12px; }
+
+.skeleton-row {
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(245,240,232,0.03) 25%, rgba(245,240,232,0.06) 50%, rgba(245,240,232,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

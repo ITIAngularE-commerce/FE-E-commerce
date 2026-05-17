@@ -1,0 +1,82 @@
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">Product Management</h1>
+    <p class="page-sub">{{ filteredProducts().length }} of {{ products().length }} products</p>
+  </div>
+
+  @if (successMessage()) { <div class="toast toast-success">✓ {{ successMessage() }}</div> }
+  @if (error()) { <div class="toast toast-error">✕ {{ error() }}</div> }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="search-input" type="text" placeholder="Search products…"
+        [value]="search()" (input)="search.set($any($event.target).value)"/>
+    </div>
+  </div>
+
+  <div class="section-card">
+    @if (isLoading()) {
+      <div class="skeleton-rows">@for (i of [1,2,3,4,5]; track i) { <div class="skeleton-row"></div> }</div>
+    } @else if (filteredProducts().length === 0) {
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        </svg>
+        <p>No products found</p>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Rating</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of filteredProducts(); track product.id) {
+              <tr>
+                <td>
+                  <div class="product-cell">
+                    @if (product.imageUrls?.[0]) {
+                      <img [src]="product.imageUrls[0]" [alt]="product.name" class="product-thumb"/>
+                    } @else {
+                      <div class="product-thumb product-thumb--placeholder">📦</div>
+                    }
+                    <span class="product-name">{{ product.name }}</span>
+                  </div>
+                </td>
+                <td class="text-muted">{{ product.categoryName }}</td>
+                <td class="text-gold">${{ product.price.toFixed(2) }}</td>
+                <td>
+                  <span class="stock-badge" [class.stock-low]="product.stock < 10">
+                    {{ product.stock }}
+                  </span>
+                </td>
+                <td class="text-muted">⭐ {{ product.averageRating?.toFixed(1) ?? '—' }}</td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-action btn-edit" [routerLink]="['/admin/products/edit', product.id]">Edit</button>
+                    <button class="btn-action btn-delete"
+                      [disabled]="deletingId() === product.id"
+                      (click)="deleteProduct(product)">
+                      @if (deletingId() === product.id) { <span class="spinner"></span> }
+                      @else { Delete }
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

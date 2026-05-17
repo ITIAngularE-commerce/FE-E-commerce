@@ -103,13 +103,20 @@
             <span class="qty-val">{{ quantity() }}</span>
             <button class="qty-btn" (click)="increaseQty()">+</button>
           </div>
-          <button class="add-cart-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-            </svg>
-            Add to cart
+          <button class="add-cart-btn"
+            [disabled]="addingToCartId() === product()!.id"
+            (click)="addToCart()">
+            @if (addingToCartId() === product()!.id) {
+              <span class="spinner"></span>
+              Adding...
+            } @else {
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              </svg>
+              Add to cart
+            }
           </button>
           <!-- <button class="wish-btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -202,20 +209,30 @@
       <div class="reviews-list">
         @for (review of reviews(); track review.id) {
         <div class="review-card">
+          <!-- Header -->
           <div class="review-header">
             <div class="reviewer-avatar">
               {{ review.userName?.charAt(0) | uppercase }}
             </div>
             <div class="reviewer-info">
-              <span class="reviewer-name">{{ review.userName }}</span>
+              <span class="reviewer-name">
+                {{ review.userName }}
+              </span>
               <div class="stars">
                 @for (s of getStars(review.rating); track s) {
-                <svg width="12" height="12" viewBox="0 0 24 24" [class.star-full]="isFullStar(review.rating, s)"
-                  [class.star-empty]="!isFullStar(review.rating, s)">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  [class.star-full]="isFullStar(review.rating, s)"
+                  [class.star-empty]="!isFullStar(review.rating, s)"
+                >
                   <polygon
                     points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-                    stroke="currentColor" stroke-width="1.5"
-                    [attr.fill]="isFullStar(review.rating, s) ? 'currentColor' : 'none'" />
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    [attr.fill]="isFullStar(review.rating, s) ? 'currentColor' : 'none'"
+                  />
                 </svg>
                 }
               </div>
@@ -224,11 +241,75 @@
               {{ review.createdAt | date:'MMM d, y' }}
             </span>
           </div>
-          <p class="review-comment">{{ review.comment }}</p>
+          <!-- Edit Mode -->
+          @if (editingReviewId() === review.id) {
+          <div class="edit-review-box">
+            <!-- Editable Stars -->
+            <div class="star-picker">
+              @for (s of getStars(5); track s) {
+              <button
+                type="button"
+                class="star-pick"
+                [class.star-picked]="s < editReviewData.rating"
+                (click)="editReviewData.rating = s + 1"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                    stroke="#c8a96e"
+                    stroke-width="1.5"
+                    [attr.fill]="s < editReviewData.rating ? '#c8a96e' : 'none'"
+                  />
+                </svg>
+              </button>
+              }
+            </div>
+            <!-- Editable Comment -->
+            <textarea
+              [(ngModel)]="editReviewData.comment"
+              class="review-textarea w-full"
+              rows="3"
+            ></textarea>
+          </div>
+          } @else {
+          <!-- Normal Comment -->
+          <p class="review-comment">
+            {{ review.comment }}
+          </p>
+          }
+
+          <!-- Buttons -->
           @if (authService.currentUser()?.userId === review.userId) {
-          <button class="delete-review" (click)="deleteReview(review.id)">
-            Delete
-          </button>
+          <div class="btns d-flex wrap gap-2">
+            @if (editingReviewId() === review.id) {
+            <button
+              class="update-review"
+              (click)="saveReview(review.id)"
+            >
+              Save
+            </button>
+            <button
+              class="delete-review"
+              (click)="cancelEdit()"
+            >
+              Cancel
+            </button>
+            } @else {
+            <button
+              class="update-review"
+              (click)="startEdit(review)"
+            >
+              Update
+            </button>
+
+            <button
+              class="delete-review"
+              (click)="deleteReview(review.id)"
+            >
+              Delete
+            </button>
+            }
+          </div>
           }
         </div>
         }

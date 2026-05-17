@@ -8,7 +8,7 @@
       </h1>
       <p class="sd-sub">Here's what's happening with your store today</p>
     </div>
-    <a routerLink="/seller/products" class="add-product-btn">
+    <a routerLink="/seller/products" [queryParams]="{openAdd: true}" class="add-product-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2.5">
         <line x1="12" y1="5" x2="12" y2="19"/>

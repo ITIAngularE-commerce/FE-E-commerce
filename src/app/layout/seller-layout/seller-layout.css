@@ -3,6 +3,7 @@
   min-height: 100vh;
   background: #0a1628;
   width: 100%;
+  overflow: visible; 
 }
 
 /* ── Sidebar ── */
@@ -210,6 +211,7 @@
   display: flex;
   flex-direction: column;
   transition: margin-left 0.3s ease;
+  overflow: visible; 
 }
 
 .sidebar-collapsed .seller-main { margin-left: 64px; }
@@ -227,6 +229,10 @@
   position: sticky;
   top: 0;
   z-index: 40;
+}
+
+.seller-content {
+  padding-top: calc(32px + 60px); 
 }
 
 .mobile-menu-btn {
@@ -265,6 +271,16 @@
   flex: 1;
   padding: 32px;
   background: #0a1628;
+  overflow: visible; 
+}
+
+
+.seller-shell,
+.seller-main,
+.seller-content {
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
 }
 
 /* ── Responsive ── */

@@ -1,0 +1,67 @@
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">User Management</h1>
+    <p class="page-sub">{{ filteredUsers().length }} of {{ users().length }} users</p>
+  </div>
+
+  @if (successMessage()) { <div class="toast toast-success">✓ {{ successMessage() }}</div> }
+  @if (error()) { <div class="toast toast-error">✕ {{ error() }}</div> }
+
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="search-input" type="text" placeholder="Search by name or email…"
+        [value]="search()" (input)="search.set($any($event.target).value)"/>
+    </div>
+    <div class="chips">
+      @for (role of roleOptions; track role) {
+        <button class="chip" [class.chip-active]="roleFilter() === role" (click)="roleFilter.set(role)">{{ role }}</button>
+      }
+    </div>
+  </div>
+
+  <div class="section-card">
+    @if (isLoading()) {
+      <div class="skeleton-rows">@for (i of [1,2,3,4,5]; track i) { <div class="skeleton-row"></div> }</div>
+    } @else if (filteredUsers().length === 0) {
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        </svg>
+        <p>No users found</p>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>User</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            @for (user of filteredUsers(); track user.id) {
+              <tr [class.row-inactive]="!user.isActive">
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar" [class.avatar-inactive]="!user.isActive">{{ userInitial(user.fullName) }}</div>
+                    <span class="user-name">{{ user.fullName }}</span>
+                  </div>
+                </td>
+                <td class="text-muted">{{ user.email }}</td>
+                <td class="text-muted">{{ user.phoneNumber || '—' }}</td>
+                <td><span class="role-chip" [class]="roleClass(user.role)">{{ user.role }}</span></td>
+                <td class="text-muted">{{ formatDate(user.createdAt) }}</td>
+                <td><span class="status-dot" [class.active]="user.isActive">● {{ user.isActive ? 'Active' : 'Inactive' }}</span></td>
+                <td>
+                  <button class="btn-toggle" [class.btn-danger]="user.isActive" [class.btn-success]="!user.isActive"
+                    [disabled]="togglingUserId() === user.id" (click)="toggleUser(user)">
+                    @if (togglingUserId() === user.id) { <span class="spinner"></span> }
+                    @else { {{ user.isActive ? 'Deactivate' : 'Activate' }} }
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

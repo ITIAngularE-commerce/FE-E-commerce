@@ -41,4 +41,12 @@ export class OrderService {
   getAllOrdersAdmin(): Observable<ApiResponse<Order[]>> {
     return this.http.get<ApiResponse<Order[]>>(`${this.baseUrl}/admin/all`);
   }
+
+  getSellerOrders() {
+    return this.http.get<ApiResponse<Order[]>>(`${this.baseUrl}/seller`);
+  }
+
+  updateStatus(id: number, status: string) {
+    return this.http.patch<ApiResponse<boolean>>(`${this.baseUrl}/${id}/status`, { status });
+  }
 }

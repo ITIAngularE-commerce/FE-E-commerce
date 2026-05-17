@@ -39,18 +39,14 @@
       @for (product of products; track product.id) {
         <a [routerLink]="['/products', product.id]" class="t-card">
 
-          <!-- Hot indicator -->
-          @if (product.hot) {
+          <!-- Hot bar for newest products -->
+          @if ($index < 3) {
             <div class="hot-bar"></div>
           }
 
           <!-- Badge -->
-          @if (product.badge) {
-            <span class="product-badge"
-              [class.badge-sale]="product.badge === 'Sale'"
-              [class.badge-new]="product.badge === 'New'">
-              {{ product.badge }}
-            </span>
+          @if (product.stock === 0) {
+            <span class="product-badge badge-sale">Out of stock</span>
           }
 
           <!-- Wishlist -->
@@ -66,43 +62,45 @@
           <!-- Image -->
           <div class="t-img">
             <div class="img-inner">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>
+              @if (product.imageUrls?.length) {
+                <img [src]="product.imageUrls[0]" [alt]="product.name"
+                  style="width:100%;height:100%;object-fit:cover"/>
+              } @else {
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              }
             </div>
             <div class="img-glow"></div>
           </div>
 
           <!-- Info -->
           <div class="t-info">
-            <span class="t-seller">by {{ product.seller }}</span>
+            <span class="t-seller">by {{ product.sellerName }}</span>
             <h3 class="t-name">{{ product.name }}</h3>
 
             <div class="t-rating">
               <div class="stars">
-                @for (s of getStars(product.rating); track s) {
+                @for (s of getStars(product.averageRating); track s) {
                   <svg width="11" height="11" viewBox="0 0 24 24"
-                    [class.star-full]="isFullStar(product.rating, s)"
-                    [class.star-empty]="!isFullStar(product.rating, s)">
+                    [class.star-full]="isFullStar(product.averageRating, s)"
+                    [class.star-empty]="!isFullStar(product.averageRating, s)">
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14
                       18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27
                       8.91 8.26 12 2"
                       stroke="currentColor" stroke-width="1.5"
-                      [attr.fill]="isFullStar(product.rating, s) ? 'currentColor' : 'none'"/>
+                      [attr.fill]="isFullStar(product.averageRating, s) ? 'currentColor' : 'none'"/>
                   </svg>
                 }
               </div>
-              <span class="t-count">({{ product.reviews }})</span>
+              <span class="t-count">({{ product.reviewCount }})</span>
             </div>
 
             <div class="t-price">
               <span class="price-current">${{ product.price }}</span>
-              @if (product.oldPrice) {
-                <span class="price-old">${{ product.oldPrice }}</span>
-              }
             </div>
           </div>
 

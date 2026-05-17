@@ -159,7 +159,7 @@
   </div>
 
   <!-- Categories bar -->
-  <div class="categories-bar">
+  <!-- <div class="categories-bar">
     <div class="navbar-container">
       @for (cat of categories(); track cat.id) {
       <a [routerLink]="'/products'" [queryParams]="{CategoryId: cat.id}" routerLinkActive="cat-active" class="cat-link">
@@ -168,7 +168,30 @@
       }
       <a routerLink="/categories" class="cat-link cat-all">All Categories</a>
     </div>
+  </div> -->
+  <div class="categories-bar">
+  <div class="navbar-container">
+    @for (cat of visibleCats(); track cat.id) {
+      <a routerLink="/products"
+        [queryParams]="{CategoryId: cat.id}"
+        routerLinkActive="cat-active"
+        class="cat-link">
+        {{ cat.name }}
+      </a>
+    }
+    @if (hasMore()) {
+      <a routerLink="/categories" class="cat-link cat-all d-flex">
+        More 
+        <svg width="12" height="12" style="display: inline;" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </a>
+    } @else {
+      <a routerLink="/categories" class="cat-link cat-all">All Categories</a>
+    }
   </div>
+</div>
 
   <!-- Mobile menu -->
   @if (isMobileMenuOpen()) {
