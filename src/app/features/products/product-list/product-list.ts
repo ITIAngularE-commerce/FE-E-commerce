@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../services/product.service';
 import { CategoryService } from '../../../services/category.service';
@@ -16,6 +16,7 @@ import { Category } from '../../../interfaces/category.interface';
 export class ProductList implements OnInit {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
+  private route = inject(ActivatedRoute);
 
   products = signal<Product[]>([]);
   categories = signal<Category[]>([]);
@@ -36,7 +37,11 @@ export class ProductList implements OnInit {
 
   ngOnInit() {
     this.loadCategories();
-    this.loadProducts();
+    this.route.queryParams.subscribe((params) => {
+      this.filters.search = params['Search'] || '';
+      this.filters.categoryId = params['CategoryId'] ? +params['CategoryId'] : undefined;
+      this.loadProducts();
+    });
   }
 
   loadCategories() {

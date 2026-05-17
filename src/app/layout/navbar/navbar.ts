@@ -1,5 +1,5 @@
 import { CartService } from './../../core/services/cart.service';
-import { Component, signal, HostListener, inject, OnInit } from '@angular/core';
+import { Component, signal, HostListener, inject, OnInit, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
@@ -33,16 +33,18 @@ export class Navbar implements OnInit {
   //wishlist
   private wishlistService = inject(WishlistService);
   wishlistCount = this.wishlistService.wishlistCount;
+
+  maxCatsVisible = 5;
+
+  visibleCats = computed(() => this.categories().slice(0, this.maxCatsVisible));
+  hasMore = computed(() => this.categories().length > this.maxCatsVisible);
   ngOnInit() {
     this.catSvc.getAll().subscribe({
       next: (res) => this.categories.set(res.data),
     });
     this.wishlistService.getCount().subscribe();
     this.CartService.getCartCount().subscribe();
-
   }
-
-
 
   @HostListener('window:scroll')
   onScroll() {

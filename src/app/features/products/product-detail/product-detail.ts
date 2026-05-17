@@ -9,6 +9,8 @@ import { Product } from '../../../interfaces/product.interface';
 import { Review, ProductRating, CreateReviewRequest } from '../../../interfaces/review.interface';
 import { DatePipe, UpperCasePipe } from '@angular/common';
 import { WishlistService } from '../../../core/services/wishlist.service';
+import { WishlistItem } from '../../../interfaces/wishlist.interface';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -23,7 +25,7 @@ export class ProductDetail implements OnInit {
   private reviewService = inject(ReviewService);
   authService = inject(AuthService);
   private notif = inject(NotificationService);
-
+  private cartService = inject(CartService);
 
   //wishlist
   private wishlistService = inject(WishlistService);
@@ -37,6 +39,7 @@ export class ProductDetail implements OnInit {
   activeImg = signal(0);
   quantity = signal(1);
   isSubmitting = signal(false);
+  addingToCartId = signal<number | null>(null);
 
   newReview: CreateReviewRequest = { rating: 5, comment: '' };
   hoveredStar = 0;
@@ -46,7 +49,6 @@ export class ProductDetail implements OnInit {
     this.loadProduct(id);
     this.loadReviews(id);
     this.loadRating(id);
-
 
     // Check if product is in wishlist
     this.wishlistService.check(id).subscribe({
@@ -139,4 +141,19 @@ export class ProductDetail implements OnInit {
     });
   }
 
+  addToCart() {
+    const product = this.product();
+    if (!product) return;
+    this.addingToCartId.set(product.id);
+    this.cartService.addItem(product.id, this.quantity()).subscribe({
+      next: () => {
+        this.notif.success('Added!', `${product.name} added to cart`);
+        this.addingToCartId.set(null);
+      },
+      error: (err) => {
+        this.notif.error('Failed', err?.error?.message || 'Something went wrong');
+        this.addingToCartId.set(null);
+      },
+    });
+  }
 }
