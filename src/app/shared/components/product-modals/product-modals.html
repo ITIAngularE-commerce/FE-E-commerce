@@ -1,147 +1,231 @@
 @if (modalSvc.activeModal()) {
-  <div class="pm-overlay" (click)="modalSvc.close()">
-    <div class="pm-modal" [class.pm-sm]="modalSvc.activeModal() === 'delete' || modalSvc.activeModal() === 'stock'"
-      (click)="$event.stopPropagation()">
+<div class="pm-overlay" (click)="modalSvc.close()">
+  <div class="pm-modal" [class.pm-sm]="modalSvc.activeModal() === 'delete' || modalSvc.activeModal() === 'stock'"
+    (click)="$event.stopPropagation()">
 
-      <!-- ── ADD ── -->
-      @if (modalSvc.activeModal() === 'add') {
-        <div class="pm-header">
-          <h2>Add New Product</h2>
-          <button class="pm-close" (click)="modalSvc.close()">✕</button>
-        </div>
-        <div class="pm-body">
-          <div class="pm-field">
-            <label>Product Name *</label>
-            <input type="text" [(ngModel)]="addForm.name" placeholder="Enter product name" class="pm-input"/>
-          </div>
-          <div class="pm-field">
-            <label>Description</label>
-            <textarea [(ngModel)]="addForm.description" placeholder="Product description" class="pm-input" rows="3"></textarea>
-          </div>
-          <div class="pm-row">
-            <div class="pm-field">
-              <label>Price *</label>
-              <input type="number" [(ngModel)]="addForm.price" placeholder="0.00" class="pm-input"/>
-            </div>
-            <div class="pm-field">
-              <label>Stock *</label>
-              <input type="number" [(ngModel)]="addForm.stock" placeholder="0" class="pm-input"/>
-            </div>
-          </div>
-          <div class="pm-field">
-            <label>Category *</label>
-            <select [(ngModel)]="addForm.categoryId" class="pm-input">
-              <option [value]="0" disabled>Select category</option>
-              @for (cat of modalSvc.categories(); track cat.id) {
-                <option [value]="cat.id">{{ cat.name }}</option>
-              }
-            </select>
-          </div>
-          <div class="pm-field">
-            <label>Images * (at least one required)</label>
-            <div class="pm-upload" (click)="fileInput.click()">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-              <span>{{ addForm.images.length ? addForm.images.length + ' file(s) selected' : 'Click to upload images' }}</span>
-              <input #fileInput type="file" multiple accept="image/*" style="display:none" (change)="onImagesChange($event)"/>
-            </div>
-          </div>
-        </div>
-        <div class="pm-footer">
-          <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
-          <button class="pm-submit" [disabled]="isSubmitting()" (click)="submitAdd()">
-            {{ isSubmitting() ? 'Adding...' : 'Add Product' }}
-          </button>
-        </div>
-      }
-
-      <!-- ── EDIT ── -->
-      @if (modalSvc.activeModal() === 'edit') {
-        <div class="pm-header">
-          <h2>Edit Product</h2>
-          <button class="pm-close" (click)="modalSvc.close()">✕</button>
-        </div>
-        <div class="pm-body">
-          <div class="pm-field">
-            <label>Product Name</label>
-            <input type="text" [(ngModel)]="editForm.name" class="pm-input"/>
-          </div>
-          <div class="pm-field">
-            <label>Description</label>
-            <textarea [(ngModel)]="editForm.description" class="pm-input" rows="3"></textarea>
-          </div>
-          <div class="pm-row">
-            <div class="pm-field">
-              <label>Price</label>
-              <input type="number" [(ngModel)]="editForm.price" class="pm-input"/>
-            </div>
-            <div class="pm-field">
-              <label>Stock</label>
-              <input type="number" [(ngModel)]="editForm.stock" class="pm-input"/>
-            </div>
-          </div>
-          <div class="pm-field">
-            <label>Category</label>
-            <select [(ngModel)]="editForm.categoryId" class="pm-input">
-              @for (cat of modalSvc.categories(); track cat.id) {
-                <option [value]="cat.id">{{ cat.name }}</option>
-              }
-            </select>
-          </div>
-        </div>
-        <div class="pm-footer">
-          <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
-          <button class="pm-submit" [disabled]="isSubmitting()" (click)="submitEdit()">
-            {{ isSubmitting() ? 'Saving...' : 'Save Changes' }}
-          </button>
-        </div>
-      }
-
-      <!-- ── STOCK ── -->
-      @if (modalSvc.activeModal() === 'stock') {
-        <div class="pm-header">
-          <h2>Update Stock</h2>
-          <button class="pm-close" (click)="modalSvc.close()">✕</button>
-        </div>
-        <div class="pm-body">
-          <p class="pm-product-name">{{ modalSvc.selectedProduct()?.name }}</p>
-          <div class="pm-field">
-            <label>New Stock Amount</label>
-            <input type="number" [(ngModel)]="newStock" class="pm-input" min="0"/>
-          </div>
-        </div>
-        <div class="pm-footer">
-          <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
-          <button class="pm-submit" [disabled]="isSubmitting()" (click)="submitStock()">
-            {{ isSubmitting() ? 'Updating...' : 'Update Stock' }}
-          </button>
-        </div>
-      }
-
-      <!-- ── DELETE ── -->
-      @if (modalSvc.activeModal() === 'delete') {
-        <div class="pm-header">
-          <h2>Delete Product</h2>
-          <button class="pm-close" (click)="modalSvc.close()">✕</button>
-        </div>
-        <div class="pm-body">
-          <p class="pm-warning">
-            Are you sure you want to delete
-            <strong>{{ modalSvc.selectedProduct()?.name }}</strong>?
-            This action cannot be undone.
-          </p>
-        </div>
-        <div class="pm-footer">
-          <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
-          <button class="pm-delete" [disabled]="isSubmitting()" (click)="submitDelete()">
-            {{ isSubmitting() ? 'Deleting...' : 'Yes, Delete' }}
-          </button>
-        </div>
-      }
-
+    <!-- ── ADD ── -->
+    @if (modalSvc.activeModal() === 'add') {
+    <div class="pm-header">
+      <h2>Add New Product</h2>
+      <button class="pm-close" (click)="modalSvc.close()">✕</button>
     </div>
+    <div class="pm-body">
+      <div class="pm-field">
+        <label>Product Name *</label>
+        <input type="text" [(ngModel)]="addForm.name" placeholder="Enter product name" class="pm-input" />
+      </div>
+      <div class="pm-field">
+        <label>Description</label>
+        <textarea [(ngModel)]="addForm.description" placeholder="Product description" class="pm-input"
+          rows="3"></textarea>
+      </div>
+      <div class="pm-row">
+        <div class="pm-field">
+          <label>Price *</label>
+          <input type="number" [(ngModel)]="addForm.price" placeholder="0.00" class="pm-input" />
+        </div>
+        <div class="pm-field">
+          <label>Stock *</label>
+          <input type="number" [(ngModel)]="addForm.stock" placeholder="0" class="pm-input" />
+        </div>
+      </div>
+      <div class="pm-field">
+        <label>Category *</label>
+        <select [(ngModel)]="addForm.categoryId" class="pm-input">
+          <option [value]="0" disabled>Select category</option>
+          @for (cat of modalSvc.categories(); track cat.id) {
+          <option [value]="cat.id">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="pm-field">
+        <label>Images * (at least one required)</label>
+        <div class="pm-upload" (click)="fileInput.click()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span>{{ addForm.images.length ? addForm.images.length + ' file(s) selected' : 'Click to upload images'
+            }}</span>
+          <input #fileInput type="file" multiple accept="image/*" style="display:none"
+            (change)="onImagesChange($event)" />
+        </div>
+      </div>
+    </div>
+    <div class="pm-footer">
+      <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+      <button class="pm-submit" [disabled]="isSubmitting()" (click)="submitAdd()">
+        {{ isSubmitting() ? 'Adding...' : 'Add Product' }}
+      </button>
+    </div>
+    }
+
+    <!-- ── EDIT ── -->
+    @if (modalSvc.activeModal() === 'edit') {
+    <div class="pm-header">
+      <h2>Edit Product</h2>
+      <button class="pm-close" (click)="modalSvc.close()">✕</button>
+    </div>
+    <div class="pm-body">
+      <div class="pm-field">
+        <label>Product Name</label>
+        <input type="text" [(ngModel)]="editForm.name" class="pm-input" />
+      </div>
+      <div class="pm-field">
+        <label>Description</label>
+        <textarea [(ngModel)]="editForm.description" class="pm-input" rows="3"></textarea>
+      </div>
+      <div class="pm-row">
+        <div class="pm-field">
+          <label>Price</label>
+          <input type="number" [(ngModel)]="editForm.price" class="pm-input" />
+        </div>
+        <div class="pm-field">
+          <label>Stock</label>
+          <input type="number" [(ngModel)]="editForm.stock" class="pm-input" />
+        </div>
+      </div>
+      <div class="pm-field">
+        <label>Category</label>
+        <select [(ngModel)]="editForm.categoryId" class="pm-input">
+          @for (cat of modalSvc.categories(); track cat.id) {
+          <option [value]="cat.id">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="pm-footer">
+      <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+      <button class="pm-submit" [disabled]="isSubmitting()" (click)="submitEdit()">
+        {{ isSubmitting() ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+    }
+
+    <!-- ── STOCK ── -->
+    @if (modalSvc.activeModal() === 'stock') {
+    <div class="pm-header">
+      <h2>Update Stock</h2>
+      <button class="pm-close" (click)="modalSvc.close()">✕</button>
+    </div>
+    <div class="pm-body">
+      <p class="pm-product-name">{{ modalSvc.selectedProduct()?.name }}</p>
+      <div class="pm-field">
+        <label>New Stock Amount</label>
+        <input type="number" [(ngModel)]="newStock" class="pm-input" min="0" />
+      </div>
+    </div>
+    <div class="pm-footer">
+      <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+      <button class="pm-submit" [disabled]="isSubmitting()" (click)="submitStock()">
+        {{ isSubmitting() ? 'Updating...' : 'Update Stock' }}
+      </button>
+    </div>
+    }
+
+    <!-- ── DELETE ── -->
+    @if (modalSvc.activeModal() === 'delete') {
+    <div class="pm-header">
+      <h2>Delete Product</h2>
+      <button class="pm-close" (click)="modalSvc.close()">✕</button>
+    </div>
+    <div class="pm-body">
+      <p class="pm-warning">
+        Are you sure you want to delete
+        <strong>{{ modalSvc.selectedProduct()?.name }}</strong>?
+        This action cannot be undone.
+      </p>
+    </div>
+    <div class="pm-footer">
+      <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+      <button class="pm-delete" [disabled]="isSubmitting()" (click)="submitDelete()">
+        {{ isSubmitting() ? 'Deleting...' : 'Yes, Delete' }}
+      </button>
+    </div>
+    }
+
+    @if (modalSvc.activeModal() === 'category-add' || modalSvc.activeModal() === 'category-edit') {
+    <div class="pm-header">
+      <h2>{{ modalSvc.activeModal() === 'category-edit' ? 'Edit Category' : 'Add Category' }}</h2>
+      <button class="pm-close" (click)="modalSvc.close()">✕</button>
+    </div>
+
+    <div class="pm-body">
+      <div class="pm-field">
+        <label>Category Name *</label>
+        <input type="text" class="pm-input" [(ngModel)]="categoryForm.name" name="categoryName" />
+      </div>
+
+      <div class="pm-field">
+        <label>Category Image</label>
+
+        @if (modalSvc.activeModal() === 'category-edit' && categoryForm.imageUrl && !categoryImageFile) {
+        <img [src]="categoryForm.imageUrl"
+          style="width:64px;height:64px;border-radius:10px;object-fit:cover;margin-bottom:8px;border:1px solid rgba(200,169,110,0.2)"
+          alt="current" />
+        <p style="font-size:0.72rem;color:rgba(200,169,110,0.5);margin:0 0 6px">
+          Upload new image to replace
+        </p>
+        }
+
+        @if (categoryImageFile) {
+        <img [src]="getCategoryPreview()"
+          style="width:64px;height:64px;border-radius:10px;object-fit:cover;margin-bottom:8px;border:1px solid rgba(200,169,110,0.4)"
+          alt="preview" />
+        }
+
+        <div class="pm-upload" (click)="catFileInput.click()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span>{{ categoryImageFile ? categoryImageFile.name : 'Click to upload image' }}</span>
+          <input #catFileInput type="file" accept="image/*" style="display:none"
+            (change)="onCategoryImageChange($event)" />
+        </div>
+      </div>
+
+      <div class="pm-field">
+        <label>Parent Category</label>
+        <select class="pm-input" name="categoryParentId" [(ngModel)]="categoryForm.parentId">
+          <option [ngValue]="undefined">None</option>
+          @for (cat of parentOptions; track cat.id) {
+          <option [ngValue]="cat.id">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="pm-footer">
+      <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+      <!-- تم حل مشكلة ظهور الزر فارغاً هنا -->
+      <button class="pm-submit" [disabled]="isSubmitting()" (click)="saveCategory()">
+        {{ isSubmitting() ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+    }
+
+    @if (modalSvc.activeModal() === 'category-delete') {
+    <div class="pm-header">
+      <h2>Delete Category</h2>
+      <button class="pm-close" (click)="modalSvc.close()">✕</button>
+    </div>
+    <div class="pm-body">
+      <p class="pm-warning">
+        Are you sure you want to delete <strong>{{ modalSvc.selectedCategory()?.name }}</strong>?
+      </p>
+    </div>
+    <div class="pm-footer">
+      <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+      <button class="pm-delete" [disabled]="isSubmitting()" (click)="confirmDeleteCategory()">
+        {{ isSubmitting() ? 'Deleting...' : 'Yes, Delete' }}
+      </button>
+    </div>
+    }
+
+
   </div>
+</div>
 }

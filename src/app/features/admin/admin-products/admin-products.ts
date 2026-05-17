@@ -3,16 +3,21 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Product } from '../../../interfaces/product.interface';
 import { ProductService } from '../../../services/product.service';
+import { ProductModalService } from '../../../services/Product modal.service';
+import { CategoryService } from '../../../services/category.service';
+import { ProductModals } from '../../../shared/components/product-modals/product-modals';
 
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ProductModals],
   templateUrl: './admin-products.html',
   styleUrl: './admin-products.css',
 })
 export class AdminProducts implements OnInit {
   private productService = inject(ProductService);
+  private categoryService = inject(CategoryService);
+  modalSvc = inject(ProductModalService);
 
   products = signal<Product[]>([]);
   isLoading = signal(true);
@@ -29,11 +34,20 @@ export class AdminProducts implements OnInit {
   });
 
   ngOnInit() {
+    this.categoryService.getAll().subscribe({
+      next: (res) => { if (res.success) this.modalSvc.setCategories(res.data ?? []); }
+    });
+
+    this.loadProducts();
+
+    window.addEventListener('products:refresh', () => this.loadProducts());
+  }
+
+  loadProducts() {
+    this.isLoading.set(true);
     this.productService.getAll().subscribe({
       next: (res) => {
-        if (res.success && res.data) {
-          this.products.set(res.data.items ?? []);
-        }
+        if (res.success && res.data) this.products.set(res.data.items ?? []);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
@@ -41,25 +55,11 @@ export class AdminProducts implements OnInit {
   }
 
   deleteProduct(product: Product) {
-    if (!confirm(`Delete "${product.name}"? This cannot be undone.`)) return;
-    this.deletingId.set(product.id);
-    this.productService.delete(product.id).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.products.update((list) => list.filter((p) => p.id !== product.id));
-          this.showSuccess(`"${product.name}" deleted.`);
-        }
-        this.deletingId.set(null);
-      },
-      error: () => {
-        this.error.set('Failed to delete product.');
-        this.deletingId.set(null);
-      },
-    });
+    this.modalSvc.open('delete', product);
   }
 
-  private showSuccess(msg: string) {
-    this.successMessage.set(msg);
-    setTimeout(() => this.successMessage.set(null), 3000);
-  }
+  openAdd() { this.modalSvc.open('add'); }
+  openEdit(product: Product) { this.modalSvc.open('edit', product); }
+  openStock(product: Product) { this.modalSvc.open('stock', product); }
+
 }

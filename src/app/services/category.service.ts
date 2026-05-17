@@ -17,11 +17,11 @@ export class CategoryService {
     return this.http.get<ApiResponse<Category>>(`${this.url}/${id}`);
   }
 
-  create(data: { name: string; imageUrl?: string; parentId?: number }) {
+  create(data: FormData) {
     return this.http.post<ApiResponse<Category>>(this.url, data);
   }
 
-  update(id: number, data: { name: string; imageUrl?: string; parentId?: number }) {
+  update(id: number, data: FormData) {
     return this.http.put<ApiResponse<Category>>(`${this.url}/${id}`, data);
   }
 
