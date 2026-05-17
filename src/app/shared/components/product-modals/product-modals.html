@@ -1,0 +1,147 @@
+@if (modalSvc.activeModal()) {
+  <div class="pm-overlay" (click)="modalSvc.close()">
+    <div class="pm-modal" [class.pm-sm]="modalSvc.activeModal() === 'delete' || modalSvc.activeModal() === 'stock'"
+      (click)="$event.stopPropagation()">
+
+      <!-- ── ADD ── -->
+      @if (modalSvc.activeModal() === 'add') {
+        <div class="pm-header">
+          <h2>Add New Product</h2>
+          <button class="pm-close" (click)="modalSvc.close()">✕</button>
+        </div>
+        <div class="pm-body">
+          <div class="pm-field">
+            <label>Product Name *</label>
+            <input type="text" [(ngModel)]="addForm.name" placeholder="Enter product name" class="pm-input"/>
+          </div>
+          <div class="pm-field">
+            <label>Description</label>
+            <textarea [(ngModel)]="addForm.description" placeholder="Product description" class="pm-input" rows="3"></textarea>
+          </div>
+          <div class="pm-row">
+            <div class="pm-field">
+              <label>Price *</label>
+              <input type="number" [(ngModel)]="addForm.price" placeholder="0.00" class="pm-input"/>
+            </div>
+            <div class="pm-field">
+              <label>Stock *</label>
+              <input type="number" [(ngModel)]="addForm.stock" placeholder="0" class="pm-input"/>
+            </div>
+          </div>
+          <div class="pm-field">
+            <label>Category *</label>
+            <select [(ngModel)]="addForm.categoryId" class="pm-input">
+              <option [value]="0" disabled>Select category</option>
+              @for (cat of modalSvc.categories(); track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="pm-field">
+            <label>Images * (at least one required)</label>
+            <div class="pm-upload" (click)="fileInput.click()">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span>{{ addForm.images.length ? addForm.images.length + ' file(s) selected' : 'Click to upload images' }}</span>
+              <input #fileInput type="file" multiple accept="image/*" style="display:none" (change)="onImagesChange($event)"/>
+            </div>
+          </div>
+        </div>
+        <div class="pm-footer">
+          <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+          <button class="pm-submit" [disabled]="isSubmitting()" (click)="submitAdd()">
+            {{ isSubmitting() ? 'Adding...' : 'Add Product' }}
+          </button>
+        </div>
+      }
+
+      <!-- ── EDIT ── -->
+      @if (modalSvc.activeModal() === 'edit') {
+        <div class="pm-header">
+          <h2>Edit Product</h2>
+          <button class="pm-close" (click)="modalSvc.close()">✕</button>
+        </div>
+        <div class="pm-body">
+          <div class="pm-field">
+            <label>Product Name</label>
+            <input type="text" [(ngModel)]="editForm.name" class="pm-input"/>
+          </div>
+          <div class="pm-field">
+            <label>Description</label>
+            <textarea [(ngModel)]="editForm.description" class="pm-input" rows="3"></textarea>
+          </div>
+          <div class="pm-row">
+            <div class="pm-field">
+              <label>Price</label>
+              <input type="number" [(ngModel)]="editForm.price" class="pm-input"/>
+            </div>
+            <div class="pm-field">
+              <label>Stock</label>
+              <input type="number" [(ngModel)]="editForm.stock" class="pm-input"/>
+            </div>
+          </div>
+          <div class="pm-field">
+            <label>Category</label>
+            <select [(ngModel)]="editForm.categoryId" class="pm-input">
+              @for (cat of modalSvc.categories(); track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="pm-footer">
+          <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+          <button class="pm-submit" [disabled]="isSubmitting()" (click)="submitEdit()">
+            {{ isSubmitting() ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      }
+
+      <!-- ── STOCK ── -->
+      @if (modalSvc.activeModal() === 'stock') {
+        <div class="pm-header">
+          <h2>Update Stock</h2>
+          <button class="pm-close" (click)="modalSvc.close()">✕</button>
+        </div>
+        <div class="pm-body">
+          <p class="pm-product-name">{{ modalSvc.selectedProduct()?.name }}</p>
+          <div class="pm-field">
+            <label>New Stock Amount</label>
+            <input type="number" [(ngModel)]="newStock" class="pm-input" min="0"/>
+          </div>
+        </div>
+        <div class="pm-footer">
+          <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+          <button class="pm-submit" [disabled]="isSubmitting()" (click)="submitStock()">
+            {{ isSubmitting() ? 'Updating...' : 'Update Stock' }}
+          </button>
+        </div>
+      }
+
+      <!-- ── DELETE ── -->
+      @if (modalSvc.activeModal() === 'delete') {
+        <div class="pm-header">
+          <h2>Delete Product</h2>
+          <button class="pm-close" (click)="modalSvc.close()">✕</button>
+        </div>
+        <div class="pm-body">
+          <p class="pm-warning">
+            Are you sure you want to delete
+            <strong>{{ modalSvc.selectedProduct()?.name }}</strong>?
+            This action cannot be undone.
+          </p>
+        </div>
+        <div class="pm-footer">
+          <button class="pm-cancel" (click)="modalSvc.close()">Cancel</button>
+          <button class="pm-delete" [disabled]="isSubmitting()" (click)="submitDelete()">
+            {{ isSubmitting() ? 'Deleting...' : 'Yes, Delete' }}
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+}

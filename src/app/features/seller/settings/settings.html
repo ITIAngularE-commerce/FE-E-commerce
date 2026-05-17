@@ -1,1 +1,41 @@
-<p>settings works!</p>
+<div class="settings-wrapper">
+  <div class="settings-header">
+    <h1 class="settings-title">Store Settings</h1>
+    <p class="settings-sub">Manage your seller profile</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="settings-skeleton">
+      <div class="sk-line w40"></div>
+      <div class="sk-line w100"></div>
+      <div class="sk-line w100"></div>
+      <div class="sk-line w100"></div>
+    </div>
+  } @else {
+    <div class="settings-card">
+      <h2 class="card-title">Personal Information</h2>
+
+      <div class="field-group">
+        <label>Full Name</label>
+        <input type="text" [(ngModel)]="profileForm.fullName"
+          class="field-input" placeholder="Your full name"/>
+      </div>
+
+      <div class="field-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="profileForm.email"
+          class="field-input" placeholder="your@email.com"/>
+      </div>
+
+      <div class="field-group">
+        <label>Phone Number</label>
+        <input type="tel" [(ngModel)]="profileForm.phoneNumber"
+          class="field-input" placeholder="+20 100 000 0000"/>
+      </div>
+
+      <button class="save-btn" [disabled]="isSubmitting()" (click)="saveProfile()">
+        {{ isSubmitting() ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  }
+</div>

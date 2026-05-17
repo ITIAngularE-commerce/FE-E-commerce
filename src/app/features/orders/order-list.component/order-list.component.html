@@ -79,8 +79,8 @@
 
                     <div class="order-header-right">
                         <span class="btn-view" (click)="viewOrderDetails(order.id)">view</span>
-                        <span class="status-chip" [class]="statusClass(order.status)">
-                            <i [class]="statusIcon(order.status)"></i>
+                        <span class="status-chip" [class]="statusClass($any(order.status))">
+                            <i [class]="statusIcon($any(order.status))"></i>
                             {{ order.status }}
                         </span>
                         <span class="order-total">${{ order.total.toFixed(2) }}</span>
@@ -132,7 +132,7 @@
                     </div>
 
                     <!-- Cancel Button -->
-                    @if (canCancel(order.status)) {
+                @if (canCancel($any(order.status))) {
                     <div class="order-actions">
                         <button class="btn-cancel" (click)="cancelOrder(order.id); $event.stopPropagation()"
                             [disabled]="cancellingId() === order.id">
@@ -143,7 +143,7 @@
                             }
                         </button>
                     </div>
-                    }
+                }
                 </div>
                 }
 

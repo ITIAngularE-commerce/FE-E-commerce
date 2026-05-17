@@ -1,0 +1,267 @@
+.so-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.so-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f5f0e8;
+  letter-spacing: -0.02em;
+}
+
+.so-sub {
+  font-size: 0.875rem;
+  color: rgba(245,240,232,0.4);
+  margin-top: 4px;
+}
+
+/* ── Stats ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.stat-card {
+  position: relative;
+  background: rgba(26,46,69,0.5);
+  backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, var(--color) 20%, transparent);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.25),
+    0 0 30px color-mix(in srgb, var(--color) 12%, transparent);
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color) 12%, transparent);
+  color: var(--color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-info { display: flex; flex-direction: column; gap: 3px; }
+.stat-value { font-size: 1.4rem; font-weight: 700; color: #f5f0e8; letter-spacing: -0.02em; }
+.stat-label { font-size: 0.75rem; color: rgba(245,240,232,0.4); }
+
+.stat-glow {
+  position: absolute;
+  right: -20px; top: 50%;
+  transform: translateY(-50%);
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--color);
+  opacity: 0.06;
+  filter: blur(20px);
+}
+
+/* ── Orders list ── */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Order card ── */
+.order-card {
+  background: rgba(26,46,69,0.45);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(200,169,110,0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.order-card:hover { border-color: rgba(200,169,110,0.25); }
+.order-expanded { border-color: rgba(200,169,110,0.3) !important; }
+
+/* ── Order header ── */
+.order-header {
+  display: grid;
+  grid-template-columns: 1.5fr 1.2fr 0.8fr 1fr 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.order-header:hover { background: rgba(200,169,110,0.04); }
+
+.order-id { display: flex; flex-direction: column; gap: 3px; }
+.id-label { font-size: 0.95rem; font-weight: 700; color: #f5f0e8; }
+.tracking { font-size: 0.72rem; color: rgba(245,240,232,0.35); font-family: monospace; }
+
+.order-meta { display: flex; flex-direction: column; gap: 3px; }
+.order-date { font-size: 0.82rem; color: rgba(245,240,232,0.6); }
+.order-city { font-size: 0.75rem; color: rgba(245,240,232,0.35); }
+
+.order-items-count { font-size: 0.82rem; color: rgba(245,240,232,0.5); }
+
+.order-total { font-size: 1rem; font-weight: 700; color: #c8a96e; }
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chevron {
+  color: rgba(245,240,232,0.3);
+  transition: transform 0.3s;
+}
+
+.order-expanded .chevron { transform: rotate(180deg); }
+
+/* ── Order details ── */
+.order-details {
+  border-top: 1px solid rgba(200,169,110,0.08);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slide-down 0.3s ease;
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.detail-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #c8a96e;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+/* ── Items ── */
+.items-list { display: flex; flex-direction: column; gap: 10px; }
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(13,27,42,0.3);
+  border-radius: 10px;
+}
+
+.item-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(13,27,42,0.5);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(245,240,232,0.2);
+  flex-shrink: 0;
+}
+
+.item-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.item-info { display: flex; align-items: center; gap: 8px; flex: 1; }
+.item-name { font-size: 0.875rem; color: #f5f0e8; font-weight: 500; }
+.item-qty { font-size: 0.78rem; color: rgba(245,240,232,0.4); }
+.item-price { font-size: 0.875rem; font-weight: 600; color: #c8a96e; }
+
+/* ── Detail bottom ── */
+.detail-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 600px) { .detail-bottom { grid-template-columns: 1fr; } }
+
+.detail-address p {
+  font-size: 0.85rem;
+  color: rgba(245,240,232,0.5);
+  line-height: 1.6;
+}
+
+/* ── Status actions ── */
+.status-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--color) 30%, transparent);
+  background: transparent;
+  color: color-mix(in srgb, var(--color) 80%, white);
+  transition: all 0.2s;
+}
+
+.status-btn:hover {
+  background: color-mix(in srgb, var(--color) 15%, transparent);
+  color: var(--color);
+}
+
+.status-btn-active {
+  background: color-mix(in srgb, var(--color) 20%, transparent) !important;
+  border-color: var(--color) !important;
+  color: var(--color) !important;
+}
+
+/* ── Empty ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 80px 20px;
+  color: rgba(245,240,232,0.3);
+  background: rgba(26,46,69,0.3);
+  border: 1px dashed rgba(200,169,110,0.15);
+  border-radius: 20px;
+}
+
+.empty-state p { font-size: 0.9rem; }
+
+/* ── Skeletons ── */
+.stat-skeleton {
+  height: 84px;
+  border-radius: 16px;
+  background: linear-gradient(90deg,
+    rgba(245,240,232,0.03) 25%,
+    rgba(245,240,232,0.07) 50%,
+    rgba(245,240,232,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

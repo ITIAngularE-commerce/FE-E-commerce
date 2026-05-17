@@ -5,11 +5,11 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Product } from '../../../interfaces/product.interface';
 @Component({
   selector: 'app-dashboard',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   private productSvc = inject(ProductService);
   authService = inject(AuthService);
 
