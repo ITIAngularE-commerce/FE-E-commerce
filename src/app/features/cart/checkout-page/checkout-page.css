@@ -537,21 +537,21 @@
     justify-content: space-between;
     margin-top: 20px;
     padding-top: 16px;
+    border-top: 1px solid var(--border);
 }
 
-.badge {
+.badge-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 5px;
     font-size: 11px;
-    color: white;
-    height: 0px;
+    color: var(--text-muted);
+    text-align: center;
 }
 
-.badge i {
+.badge-item span:first-child {
     font-size: 18px;
-    color: var(--gold);
 }
 
 /* ─── Loading / Empty ─────────────────────────────────────────── */
